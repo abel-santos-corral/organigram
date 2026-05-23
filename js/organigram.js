@@ -351,22 +351,12 @@
       html += '</div>';
     }
 
-    // Description & Scope of Work (Paragraphs).
-    if (d.scope_work && d.scope_work.length > 0) {
+    // Description & Scope of Work.
+    if (d.field_scope_of_work) {
+      const scopeHeading = d.field_scope_of_work_title || d.field_scope_of_works_title || 'Description & Scope of Work';
       html += '<div class="org-modal__scope">';
-      html += '<h3 class="org-modal__scope-heading">Description &amp; Scope of Work</h3>';
-      d.scope_work.forEach(section => {
-        if (section.title) {
-          html += `<p class="org-modal__section-title"><strong>${escHtml(section.title)}</strong></p>`;
-        }
-        if (section.items && section.items.length > 0) {
-          html += '<ul class="org-modal__list">';
-          section.items.forEach(item => {
-            html += `<li>${escHtml(item)}</li>`;
-          });
-          html += '</ul>';
-        }
-      });
+      html += `<h3 class="org-modal__scope-heading">${escHtml(scopeHeading)}</h3>`;
+      html += `<div class="org-modal__scope-content">${d.field_scope_of_work}</div>`;
       html += '</div>';
     }
 

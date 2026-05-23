@@ -5,6 +5,7 @@ namespace Drupal\organigram\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\file\FileInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\organigram\Entity\OrganigramNodeTypeInterface;
@@ -35,21 +36,26 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class OrganigramController extends ControllerBase {
 
-  protected $entityTypeManager;
-  protected $fileUrlGenerator;
+  protected EntityTypeManagerInterface $organigramEntityTypeManager;
+  protected FileUrlGeneratorInterface $fileUrlGenerator;
 
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     FileUrlGeneratorInterface $file_url_generator,
   ) {
-    $this->entityTypeManager = $entity_type_manager;
+    $this->organigramEntityTypeManager = $entity_type_manager;
     $this->fileUrlGenerator  = $file_url_generator;
   }
 
   public static function create(ContainerInterface $container): static {
+    $entity_type_manager = $container->get('entity_type.manager');
+    $file_url_generator = $container->get('file_url_generator');
+    assert($entity_type_manager instanceof EntityTypeManagerInterface);
+    assert($file_url_generator instanceof FileUrlGeneratorInterface);
+
     return new static(
-      $container->get('entity_type.manager'),
-      $container->get('file_url_generator'),
+      $entity_type_manager,
+      $file_url_generator,
     );
   }
 
@@ -117,12 +123,12 @@ class OrganigramController extends ControllerBase {
       'cv'                  => NULL,
       'declaration_interest'=> NULL,
 
-      'scope_work'    => [],
+      'field_scope_of_works_title' => $this->fieldString($node, 'field_scope_of_works_title'),
+      'field_scope_of_work' => $this->fieldProcessedText($node, 'field_scope_of_work'),
       'start_date'    => $this->fieldString($node, 'field_start_date'),
       'end_date'      => $this->fieldString($node, 'field_end_date'),
       'relation_type' => $this->fieldString($node, 'field_relation_type'),
       'related_nodes' => $this->buildRelatedNodes($node),
-      'children'      => [],
     ];
 
     // ── Resolve OrganigramNodeType config entity ───────────────────────────────────────
@@ -153,28 +159,6 @@ class OrganigramController extends ControllerBase {
       $data['declaration_interest'] = $this->fieldFileUrl($node, 'field_declaration_interest');
     }
 
-    // ── Paragraphs: Description & Scope of Work ───────────────────────────────
-    if ($node->hasField('field_scope_work') && !$node->get('field_scope_work')->isEmpty()) {
-      foreach ($node->get('field_scope_work') as $item) {
-        $para = $item->entity;
-        if (!$para) {
-          continue;
-        }
-        $bullets = [];
-        if ($para->hasField('field_bullet_points')) {
-          foreach ($para->get('field_bullet_points') as $bp) {
-            if (!empty($bp->value)) {
-              $bullets[] = $bp->value;
-            }
-          }
-        }
-        $data['scope_work'][] = [
-          'title' => $para->hasField('field_section_title') ? ($para->get('field_section_title')->value ?? '') : '',
-          'items' => $bullets,
-        ];
-      }
-    }
-
     $data['children'] = $this->buildChildren($node, $depth);
     return $data;
   }
@@ -184,7 +168,7 @@ class OrganigramController extends ControllerBase {
   // ---------------------------------------------------------------------------
 
   protected function buildChildren(NodeInterface $node, int $depth): array {
-    $storage = $this->entityTypeManager->getStorage('node');
+    $storage = $this->organigramEntityTypeManager->getStorage('node');
     $child_ids = $storage->getQuery()
       ->condition('type', 'organigram_node')
       ->condition('field_parent_node', $node->id())
@@ -201,6 +185,9 @@ class OrganigramController extends ControllerBase {
 
     $children = [];
     foreach ($storage->loadMultiple($child_ids) as $child) {
+      if (!$child instanceof NodeInterface) {
+        continue;
+      }
       $child_data = $this->buildNodeData($child, $depth + 1);
       if ($child_data !== NULL) {
         $children[] = $child_data;
@@ -239,10 +226,15 @@ class OrganigramController extends ControllerBase {
     return (bool) $node->get($field_name)->value;
   }
 
+  protected function fieldProcessedText(NodeInterface $node, string $field_name): ?string {
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) return NULL;
+    return (string) $node->get($field_name)->first()->get('processed')->getValue();
+  }
+
   protected function fieldFileUrl(NodeInterface $node, string $field_name): ?string {
     if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) return NULL;
     $file = $node->get($field_name)->entity;
-    return $file ? $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri()) : NULL;
+    return $file instanceof FileInterface ? $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri()) : NULL;
   }
 
   protected function fieldImageUrl(NodeInterface $node, string $field_name): ?string {
