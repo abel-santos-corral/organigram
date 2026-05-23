@@ -101,13 +101,13 @@
 
       // Inline styles using CSS custom properties so dark mode works.
       svg.append('style').text(`
-        .org-link   { fill:none; stroke:var(--organigram-link-color,#ccc); stroke-width:.5; }
+        .org-link   { fill:none; stroke:var(--organigram-link-color,#ccc); stroke-width:var(--organigram-link-width,.5); stroke-dasharray:var(--organigram-link-dasharray,none); }
         .org-node   { cursor:pointer; }
-        .org-rect   { fill:var(--organigram-node-bg,#fff); stroke:var(--organigram-node-border,#ccc); stroke-width:.5; transition:stroke .15s; }
+        .org-rect   { fill:var(--organigram-node-bg,#fff); stroke:var(--organigram-node-border,#ccc); stroke-width:var(--organigram-node-border-width,.5); transition:stroke .15s; }
         .org-rect--vacant   { stroke-dasharray:5,3; fill:var(--organigram-vacant-bg,#f9f9f7); }
         .org-rect--selected { stroke-width:2; stroke:var(--organigram-selected-border,#333); }
-        .org-title  { font-size:10px; font-weight:600; font-family:system-ui,sans-serif; fill:var(--organigram-text,#1a1a18); }
-        .org-person { font-size:9px;  font-family:system-ui,sans-serif; fill:var(--organigram-subtext,#777); }
+        .org-title  { font-size:var(--organigram-node-font-size,10px); font-weight:600; font-family:system-ui,sans-serif; fill:var(--organigram-node-font-color,var(--organigram-text,#1a1a18)); }
+        .org-person { font-size:9px;  font-family:system-ui,sans-serif; fill:var(--organigram-node-font-color,var(--organigram-subtext,#777)); }
         .org-vacant-label { font-size:9px; font-style:italic; font-family:system-ui,sans-serif; fill:var(--organigram-vacant-text,#aaa); }
         .org-cluster-rect  { stroke-width:.5; stroke-dasharray:5,3; }
         .org-cluster-label { font-size:9px; font-weight:600; font-family:system-ui,sans-serif; }
@@ -134,9 +134,9 @@
           const gts = d.target.data.organigram_node_type_settings;
           const sel = d3.select(this);
           if (gts) {
-            sel.attr('stroke', gts.line_color)
-               .attr('stroke-width', gts.line_size)
-               .attr('stroke-dasharray', gts.line_dash_array === 'none' ? null : gts.line_dash_array);
+            sel.style('--organigram-link-color', gts.line_color)
+               .style('--organigram-link-width', gts.line_size)
+               .style('--organigram-link-dasharray', gts.line_dash_array === 'none' ? 'none' : gts.line_dash_array);
           }
         });
 
@@ -173,8 +173,11 @@
           const gts = d.data.organigram_node_type_settings;
           const sel = d3.select(this);
           if (gts) {
-            if (!d.data.vacant) sel.attr('fill', gts.box_background);
-            sel.attr('stroke', gts.line_color);
+            if (!d.data.vacant) {
+              sel.style('--organigram-node-bg', gts.box_background);
+            }
+            sel.style('--organigram-node-border', gts.line_color)
+               .style('--organigram-node-border-width', gts.line_size);
           }
         });
 
@@ -201,8 +204,8 @@
           const t = el.append('text').attr('class', 'org-title')
             .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
             .attr('y', y).text(line);
-          if (fontColor) t.attr('fill', fontColor);
-          if (fontSize)  t.attr('font-size', fontSize);
+          if (fontColor) t.style('--organigram-node-font-color', fontColor);
+          if (fontSize)  t.style('--organigram-node-font-size', `${fontSize}px`);
           y += lineH;
         });
 
@@ -210,7 +213,7 @@
           const pt = el.append('text').attr('class', 'org-person')
             .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
             .attr('y', y).text(d.data.responsible_name);
-          if (fontColor) pt.attr('fill', fontColor).attr('opacity', 0.72);
+          if (fontColor) pt.style('--organigram-node-font-color', fontColor).attr('opacity', 0.72);
         }
         else {
           el.append('text').attr('class', 'org-vacant-label')
