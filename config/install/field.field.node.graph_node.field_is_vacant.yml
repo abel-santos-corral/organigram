@@ -8,8 +8,8 @@ id: node.graph_node.field_is_vacant
 field_name: field_is_vacant
 entity_type: node
 bundle: graph_node
-label: 'Is Vacant'
-description: ''
+label: 'Vacant'
+description: 'Set vacant when no person is currently in charge of the department, unit, etc.'
 required: false
 translatable: false
 default_value: []

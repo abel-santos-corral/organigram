@@ -9,7 +9,7 @@ field_name: field_graph_node_type
 entity_type: node
 bundle: graph_node
 label: 'Graph Node Type'
-description: 'The visual type of this node. Controls box style, font, colours, and connector line appearance.'
+description: 'The visual type of this node at organigram. Controls box style, font, colours, and connector line appearance.'
 required: true
 translatable: false
 default_value: []

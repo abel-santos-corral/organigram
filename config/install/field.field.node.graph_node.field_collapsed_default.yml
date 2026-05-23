@@ -9,7 +9,7 @@ field_name: field_collapsed_default
 entity_type: node
 bundle: graph_node
 label: 'Collapsed by Default'
-description: ''
+description: 'Collapses the node in the organigram.'
 required: false
 translatable: false
 default_value: []

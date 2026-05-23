@@ -7,7 +7,6 @@
  *
  * Features:
  *  - Hierarchical top-down tree (d3.tree)
- *  - Department cluster backgrounds coloured from field_department_color
  *  - Click-to-open slide-in detail modal
  *  - Vacant node visual treatment (dashed border, italic)
  *  - Collapsible subtrees (double-click)
@@ -177,10 +176,6 @@
             if (!d.data.vacant) sel.attr('fill', gts.box_background);
             sel.attr('stroke', gts.line_color);
           }
-          else {
-            const color = d.data.node_color || d.data.department_color;
-            if (color) sel.attr('stroke', color);
-          }
         });
 
       // Text: role title (wrapped if needed) + person name or "Vacant".
@@ -246,13 +241,13 @@
 
   // ── Department cluster drawing ─────────────────────────────────────────────
   function drawClusters(g, root) {
-    // Group nodes by graph_type id (preferred) or fallback department_color.
+    // Group nodes by graph_type id (preferred).
     const groups = {};
     root.descendants().forEach(d => {
-      const key = d.data.graph_type || d.data.department_color;
+      const key = d.data.graph_type;
       if (!key) return;
       if (!groups[key]) {
-        const color = d.data.graph_type_settings?.box_background || d.data.department_color || '#e0e0e0';
+        const color = d.data.graph_type_settings?.box_background || '#e0e0e0';
         groups[key] = { nodes: [], color };
       }
       groups[key].nodes.push(d);
@@ -332,7 +327,7 @@
     const vacant = d.vacant;
     const ini    = d.responsible_name ? d.responsible_name.split(' ').map(w => w[0]).join('') : '?';
     const gts    = d.graph_type_settings;
-    const color  = gts?.box_background || d.department_color || d.node_color || '#888';
+    const color  = gts?.box_background || '#888';
     const tint   = hexTint(color, 0.2);
 
     let html = `

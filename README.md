@@ -149,11 +149,11 @@ Drupal admin  →  graph_node nodes + graph_type config
 
 ### Requirements
 
-| Requirement | Version |
-|---|---|
-| Drupal | ^10 \|\| ^11 |
-| PHP | ^8.2 |
-| [Paragraphs](https://www.drupal.org/project/paragraphs) | ^1.15 |
+| Requirement | Version                              |
+|---|--------------------------------------|
+| Drupal | ^11 \|\| ^12                         |
+| PHP | ^8.2                                 |
+| [Paragraphs](https://www.drupal.org/project/paragraphs) | ^1.15                                |
 | Node.js / npm | Not required — D3 is loaded from CDN |
 
 ### Steps
@@ -165,7 +165,7 @@ Drupal admin  →  graph_node nodes + graph_type config
 cp -r organigram web/modules/custom/organigram
 
 # Option B — if distributed as a Composer package
-composer require your-org/organigram
+composer require drupal/organigram
 ```
 
 **2. Install the Paragraphs dependency**
@@ -324,11 +324,11 @@ Each node is one box in the organigram. A complete field reference:
 
 ### A. Core identity
 
-| Label | Machine name | Type | Required |
-|---|---|---|---|
-| Title | `title` | Core | ✅ |
+| Label           | Machine name            | Type | Required |
+|-----------------|-------------------------|---|---|
+| Title           | `title`                 | Core | ✅ |
 | Graph Node Type | `field_graph_node_type` | Entity reference → `graph_type` | ✅ |
-| Active | `field_active` | Boolean | |
+| Hidden          | `field_is_hidden` | Boolean | |
 
 ### B. Hierarchy
 
@@ -342,9 +342,6 @@ Each node is one box in the organigram. A complete field reference:
 
 | Label | Machine name | Type | Notes |
 |---|---|---|---|
-| Department Color | `field_department_color` | String | Hex. Legacy fallback if no Graph Type set |
-| Node Color | `field_node_color` | String | Hex. Per-node override |
-| Icon | `field_icon` | Image | Displayed inside the node box |
 | Display Order | `field_display_weight` | Integer | Siblings sorted ascending |
 | Collapsed by Default | `field_collapsed_default` | Boolean | Subtree starts collapsed |
 
@@ -380,7 +377,6 @@ Each `scope_work_section` paragraph contains:
 |---|---|---|
 | Start Date | `field_start_date` | Date |
 | End Date | `field_end_date` | Date |
-| External URL | `field_external_url` | Link |
 | Internal Notes | `field_internal_notes` | Long text |
 
 ---

@@ -101,19 +101,14 @@ class OrganigramController extends ControllerBase {
     $data = [
       'id'     => (int) $node->id(),
       'title'  => $node->getTitle(),
-      'active' => $this->fieldBool($node, 'field_active', TRUE),
+      'is_hidden' => $this->fieldBool($node, 'field_is_hidden', FALSE),
 
       // Graph Type replaces the old hardcoded list — includes full visual spec.
       'graph_type'          => NULL,
       'graph_type_settings' => NULL,
 
-      // Legacy colour fallbacks (kept for backward-compat, can be deprecated).
-      'department_color' => $this->fieldString($node, 'field_department_color'),
-      'node_color'       => $this->fieldString($node, 'field_node_color'),
-
       'display_weight' => (int) ($this->fieldString($node, 'field_display_weight') ?? 0),
       'collapsed'      => $this->fieldBool($node, 'field_collapsed_default'),
-      'icon'           => $this->fieldImageUrl($node, 'field_icon'),
 
       'position_title'      => $this->fieldString($node, 'field_position_title'),
       'vacant'              => $is_vacant,
@@ -125,7 +120,6 @@ class OrganigramController extends ControllerBase {
       'scope_work'    => [],
       'start_date'    => $this->fieldString($node, 'field_start_date'),
       'end_date'      => $this->fieldString($node, 'field_end_date'),
-      'external_url'  => $this->fieldLink($node, 'field_external_url'),
       'relation_type' => $this->fieldString($node, 'field_relation_type'),
       'related_nodes' => $this->buildRelatedNodes($node),
       'children'      => [],
@@ -195,7 +189,7 @@ class OrganigramController extends ControllerBase {
       ->condition('type', 'graph_node')
       ->condition('field_parent_node', $node->id())
       ->condition('status', NodeInterface::PUBLISHED)
-      ->condition('field_active', 1)
+      ->condition('field_is_hidden', 0)
       ->sort('field_display_weight', 'ASC')
       ->sort('title', 'ASC')
       ->accessCheck(TRUE)

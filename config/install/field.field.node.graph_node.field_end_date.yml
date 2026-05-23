@@ -9,7 +9,7 @@ field_name: field_end_date
 entity_type: node
 bundle: graph_node
 label: 'End Date'
-description: ''
+description: 'Date the position was closed'
 required: false
 translatable: false
 default_value: []

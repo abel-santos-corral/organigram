@@ -47,20 +47,16 @@ content:
       view_mode: default
     third_party_settings: {}
 hidden:
-  field_department_color: true
-  field_node_color: true
   field_parent_node: true
   field_related_nodes: true
   field_relation_type: true
-  field_icon: true
   field_display_weight: true
   field_collapsed_default: true
-  field_active: true
+  field_is_hidden: true
   field_position_title: true
   field_responsible_photo: true
   field_cv_document: true
   field_declaration_interest: true
   field_start_date: true
   field_end_date: true
-  field_external_url: true
   field_internal_notes: true
