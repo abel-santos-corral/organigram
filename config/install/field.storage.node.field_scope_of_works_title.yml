@@ -1,0 +1,21 @@
+uuid: e059823d-bc24-40fd-bd54-0fa872edcd23
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_scope_of_works_title
+field_name: field_scope_of_works_title
+entity_type: node
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

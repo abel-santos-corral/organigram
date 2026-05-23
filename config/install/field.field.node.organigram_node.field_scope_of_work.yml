@@ -2,13 +2,13 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_internal_notes
+    - field.storage.node.field_scope_of_work
     - node.type.organigram_node
-id: node.organigram_node.field_internal_notes
-field_name: field_internal_notes
+id: node.organigram_node.field_scope_of_work
+field_name: field_scope_of_work
 entity_type: node
 bundle: organigram_node
-label: 'Internal Notes'
+label: 'Scope of work'
 description: ''
 required: false
 translatable: false

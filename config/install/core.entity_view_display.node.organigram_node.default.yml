@@ -2,61 +2,148 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.organigram_node.field_collapsed_default
+    - field.field.node.organigram_node.field_cv_document
+    - field.field.node.organigram_node.field_declaration_interest
+    - field.field.node.organigram_node.field_display_weight
+    - field.field.node.organigram_node.field_end_date
+    - field.field.node.organigram_node.field_is_hidden
+    - field.field.node.organigram_node.field_is_vacant
+    - field.field.node.organigram_node.field_organigram_node_type
+    - field.field.node.organigram_node.field_parent_node
+    - field.field.node.organigram_node.field_position_title
+    - field.field.node.organigram_node.field_related_nodes
+    - field.field.node.organigram_node.field_relation_type
+    - field.field.node.organigram_node.field_responsible_name
+    - field.field.node.organigram_node.field_responsible_photo
+    - field.field.node.organigram_node.field_scope_of_work
+    - field.field.node.organigram_node.field_scope_of_works_title
+    - field.field.node.organigram_node.field_scope_work
+    - field.field.node.organigram_node.field_start_date
     - node.type.organigram_node
   module:
-    - node
+    - datetime
+    - text
+    - user
 id: node.organigram_node.default
 targetEntityType: node
 bundle: organigram_node
 mode: default
 content:
-  title:
-    label: hidden
-    type: string
-    weight: -10
-    settings:
-      link_to_entity: true
-    third_party_settings: {}
-  field_organigram_node_type:
-    label: above
-    type: list_default
-    weight: 1
-    settings: {}
-    third_party_settings: {}
-  field_is_vacant:
-    label: above
+  field_collapsed_default:
     type: boolean
-    weight: 2
+    label: inline
     settings:
       format: default
       format_custom_false: ''
       format_custom_true: ''
-    third_party_settings: {}
-  field_responsible_name:
-    label: above
-    type: string
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_display_weight:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_end_date:
+    type: datetime_default
+    label: inline
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_is_hidden:
+    type: boolean
+    label: inline
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_is_vacant:
+    type: boolean
+    label: inline
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_organigram_node_type:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
     weight: 3
+    region: content
+  field_parent_node:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_position_title:
+    type: string
+    label: inline
     settings:
       link_to_entity: false
-    third_party_settings: {}
-  field_scope_work:
-    label: hidden
-    type: entity_reference_revisions_entity_view
-    weight: 20
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_responsible_name:
+    type: string
+    label: inline
     settings:
-      view_mode: default
-    third_party_settings: {}
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_scope_of_work:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 11
+    region: content
+  field_scope_of_works_title:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_start_date:
+    type: datetime_default
+    label: inline
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 12
+    region: content
 hidden:
-  field_parent_node: true
-  field_related_nodes: true
-  field_relation_type: true
-  field_display_weight: true
-  field_collapsed_default: true
-  field_is_hidden: true
-  field_position_title: true
-  field_responsible_photo: true
   field_cv_document: true
   field_declaration_interest: true
-  field_start_date: true
-  field_end_date: true
-  field_internal_notes: true
+  field_related_nodes: true
+  field_relation_type: true
+  field_responsible_photo: true
+  field_scope_work: true
+  search_api_excerpt: true

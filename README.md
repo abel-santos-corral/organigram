@@ -377,7 +377,7 @@ Each `scope_work_section` paragraph contains:
 |---|---|---|
 | Start Date | `field_start_date` | Date |
 | End Date | `field_end_date` | Date |
-| Internal Notes | `field_internal_notes` | Long text |
+| Internal Notes | `field_scope_of_work` | Long text |
 
 ---
 

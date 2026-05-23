@@ -7,16 +7,17 @@ dependencies:
     - field.field.node.organigram_node.field_declaration_interest
     - field.field.node.organigram_node.field_display_weight
     - field.field.node.organigram_node.field_end_date
-    - field.field.node.organigram_node.field_organigram_node_type
-    - field.field.node.organigram_node.field_internal_notes
     - field.field.node.organigram_node.field_is_hidden
     - field.field.node.organigram_node.field_is_vacant
+    - field.field.node.organigram_node.field_organigram_node_type
     - field.field.node.organigram_node.field_parent_node
     - field.field.node.organigram_node.field_position_title
     - field.field.node.organigram_node.field_related_nodes
     - field.field.node.organigram_node.field_relation_type
     - field.field.node.organigram_node.field_responsible_name
     - field.field.node.organigram_node.field_responsible_photo
+    - field.field.node.organigram_node.field_scope_of_work
+    - field.field.node.organigram_node.field_scope_of_works_title
     - field.field.node.organigram_node.field_scope_work
     - field.field.node.organigram_node.field_start_date
     - node.type.organigram_node
@@ -24,133 +25,144 @@ dependencies:
     - datetime
     - file
     - image
-    - link
-    - options
     - paragraphs
+    - path
     - text
 id: node.organigram_node.default
 targetEntityType: node
 bundle: organigram_node
 mode: default
 content:
-  title:
-    type: string_textfield
-    weight: -30
+  created:
+    type: datetime_timestamp
+    weight: 9
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_collapsed_default:
+    type: boolean_checkbox
+    weight: 3
+    region: content
     settings:
+      display_label: true
+    third_party_settings: {  }
+  field_cv_document:
+    type: file_generic
+    weight: 19
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_declaration_interest:
+    type: file_generic
+    weight: 20
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_display_weight:
+    type: number
+    weight: 5
+    region: content
+    settings:
+      placeholder: '0'
+    third_party_settings: {  }
+  field_end_date:
+    type: datetime_default
+    weight: 11
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_is_hidden:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_is_vacant:
+    type: boolean_checkbox
+    weight: 16
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_organigram_node_type:
+    type: options_select
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_parent_node:
+    type: entity_reference_autocomplete
+    weight: 6
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
       size: 60
-      placeholder: ''
-    third_party_settings: {}
+      placeholder: 'Start typing for search and select parent node'
+    third_party_settings: {  }
   field_position_title:
     type: string_textfield
-    weight: -25
+    weight: 1
+    region: content
     settings:
       size: 60
       placeholder: 'e.g. Head of Unit'
-    third_party_settings: {}
-  field_is_hidden:
-    type: boolean_checkbox
-    weight: -20
-    settings:
-      display_label: true
-    third_party_settings: {}
-  field_collapsed_default:
-    type: boolean_checkbox
-    weight: -15
-    settings:
-      display_label: true
-    third_party_settings: {}
-  field_organigram_node_type:
-    type: options_select
-    weight: -10
-    settings: {}
-    third_party_settings: {}
-  field_display_weight:
-    type: number
-    weight: -5
-    settings:
-      placeholder: '0'
-    third_party_settings: {}
-  field_parent_node:
-    type: entity_reference_autocomplete
-    weight: 0
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
-    third_party_settings: {}
+    third_party_settings: {  }
   field_related_nodes:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 7
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
-      placeholder: ''
-    third_party_settings: {}
-  field_start_date:
-    type: datetime_default
-    weight: 10
-    settings:
-      increment: 1
-      date_order: YMD
-      time_type: none
-    third_party_settings: {}
-  field_end_date:
-    type: datetime_default
-    weight: 15
-    settings:
-      increment: 1
-      date_order: YMD
-      time_type: none
-    third_party_settings: {}
-  field_internal_notes:
-    type: text_textarea
-    weight: 20
-    settings:
-      rows: 17
-      placeholder: ''
-    third_party_settings: {}
+      placeholder: 'Start typing for search and select related nodes'
+    third_party_settings: {  }
   field_relation_type:
     type: options_select
-    weight: 25
-    settings: {}
-    third_party_settings: {}
-  field_is_vacant:
-    type: boolean_checkbox
-    weight: 30
-    settings:
-      display_label: true
-    third_party_settings: { }
+    weight: 14
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_responsible_name:
     type: string_textfield
-    weight: 35
+    weight: 17
+    region: content
     settings:
       size: 60
       placeholder: ''
-    third_party_settings: {}
+    third_party_settings: {  }
   field_responsible_photo:
     type: image_image
-    weight: 40
+    weight: 18
+    region: content
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
-    third_party_settings: {}
-  field_cv_document:
-    type: file_generic
-    weight: 45
+    third_party_settings: {  }
+  field_scope_of_work:
+    type: text_textarea
+    weight: 13
+    region: content
     settings:
-      progress_indicator: throbber
-    third_party_settings: {}
-  field_declaration_interest:
-    type: file_generic
-    weight: 50
+      rows: 17
+      placeholder: ''
+    third_party_settings: {  }
+  field_scope_of_works_title:
+    type: string_textfield
+    weight: 12
+    region: content
     settings:
-      progress_indicator: throbber
-    third_party_settings: {}
+      size: 60
+      placeholder: 'Scope of work'
+    third_party_settings: {  }
   field_scope_work:
     type: paragraphs
-    weight: 55
+    weight: 21
+    region: content
     settings:
       title: 'Scope Section'
       title_plural: 'Scope Sections'
@@ -160,11 +172,48 @@ content:
       closed_mode_threshold: 0
       add_mode: dropdown
       form_display_mode: default
-      default_paraorganigram_node_type: scope_work_section
+      default_paragraph_type: ''
       features:
-        duplicate: duplicate
         collapse_edit_all: collapse_edit_all
-    third_party_settings: {}
+        duplicate: duplicate
+    third_party_settings: {  }
+  field_start_date:
+    type: datetime_default
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 15
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 22
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 8
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
 hidden:
   promote: true
   sticky: true

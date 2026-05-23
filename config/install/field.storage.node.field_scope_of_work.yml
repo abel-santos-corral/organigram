@@ -4,8 +4,8 @@ dependencies:
   module:
     - node
     - text
-id: node.field_internal_notes
-field_name: field_internal_notes
+id: node.field_scope_of_work
+field_name: field_scope_of_work
 entity_type: node
 type: text_long
 settings: {}
