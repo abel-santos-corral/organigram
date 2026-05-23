@@ -22,4 +22,8 @@
 .org-modal__list { margin:0 0 6px; padding-left:16px; font-size:12px; line-height:1.7; color:#333; }
 .org-modal__related h3 { font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:#888; margin:12px 0 4px; }
 .org-modal__related ul { margin:0; padding-left:14px; font-size:12px; color:#333; line-height:1.7; }
-@media (max-width:768px) { .organigram__wrapper { flex-direction:column; } .organigram__modal { width:100%; } }
+@media (max-width:1024px) {
+  .organigram__wrapper { flex-direction:column; }
+  .organigram__modal { width:100%; order:1; align-self:stretch; box-sizing:border-box; }
+  .organigram__chart { width:100%; order:2; box-sizing:border-box; }
+}
