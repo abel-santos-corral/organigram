@@ -1,8 +1,8 @@
 # Schema for the Organigram module's config entities.
 
-organigram.graph_type.*:
+organigram.organigram_node_type.*:
   type: config_entity
-  label: 'Graph Type'
+  label: 'Organigram Node Type'
   mapping:
     id:
       type: string

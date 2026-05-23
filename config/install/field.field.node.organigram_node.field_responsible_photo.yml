@@ -3,11 +3,11 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_responsible_photo
-    - node.type.graph_node
-id: node.graph_node.field_responsible_photo
+    - node.type.organigram_node
+id: node.organigram_node.field_responsible_photo
 field_name: field_responsible_photo
 entity_type: node
-bundle: graph_node
+bundle: organigram_node
 label: 'Responsible Person Photo'
 description: ''
 required: false

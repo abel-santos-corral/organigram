@@ -3,11 +3,11 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_is_vacant
-    - node.type.graph_node
-id: node.graph_node.field_is_vacant
+    - node.type.organigram_node
+id: node.organigram_node.field_is_vacant
 field_name: field_is_vacant
 entity_type: node
-bundle: graph_node
+bundle: organigram_node
 label: 'Vacant'
 description: 'Set vacant when no person is currently in charge of the department, unit, etc.'
 required: false

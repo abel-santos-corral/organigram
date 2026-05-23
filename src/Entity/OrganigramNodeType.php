@@ -6,28 +6,28 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityDeleteForm;
 use Drupal\Core\Routing\AdminHtmlRouteProvider;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\organigram\Form\GraphTypeForm;
-use Drupal\organigram\GraphTypeListBuilder;
+use Drupal\organigram\Form\OrganigramNodeTypeForm;
+use Drupal\organigram\OrganigramNodeTypeListBuilder;
 
 /**
- * Defines the Graph Type config entity.
+ * Defines the Organigram Node Type config entity.
  *
  * @ConfigEntityType(
- *   id = "graph_type",
- *   label = @Translation("Graph Type"),
- *   label_collection = @Translation("Graph Types"),
+ *   id = "organigram_node_type",
+ *   label = @Translation("Organigram Node Type"),
+ *   label_collection = @Translation("Organigram Node Types"),
  *   handlers = {
- *     "list_builder" = "Drupal\organigram\GraphTypeListBuilder",
+ *     "list_builder" = "Drupal\organigram\OrganigramNodeTypeListBuilder",
  *     "form" = {
- *       "add" = "Drupal\organigram\Form\GraphTypeForm",
- *       "edit" = "Drupal\organigram\Form\GraphTypeForm",
+ *       "add" = "Drupal\organigram\Form\OrganigramNodeTypeForm",
+ *       "edit" = "Drupal\organigram\Form\OrganigramNodeTypeForm",
  *       "delete" = "Drupal\Core\Entity\EntityDeleteForm"
  *     },
  *     "route_provider" = {
  *       "html" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider"
  *     }
  *   },
- *   config_prefix = "graph_type",
+ *   config_prefix = "organigram_node_type",
  *   admin_permission = "administer organigram",
  *   entity_keys = {
  *     "id" = "id",
@@ -35,11 +35,11 @@ use Drupal\organigram\GraphTypeListBuilder;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/structure/graph-type/{graph_type}",
- *     "add-form" = "/admin/structure/graph-type/add",
- *     "edit-form" = "/admin/structure/graph-type/{graph_type}/edit",
- *     "delete-form" = "/admin/structure/graph-type/{graph_type}/delete",
- *     "collection" = "/admin/structure/graph-type"
+ *     "canonical" = "/admin/structure/organigram-node-type/{organigram_node_type}",
+ *     "add-form" = "/admin/structure/organigram-node-type/add",
+ *     "edit-form" = "/admin/structure/organigram-node-type/{organigram_node_type}/edit",
+ *     "delete-form" = "/admin/structure/organigram-node-type/{organigram_node_type}/delete",
+ *     "collection" = "/admin/structure/organigram-node-type"
  *   },
  *   config_export = {
  *     "id",
@@ -53,7 +53,7 @@ use Drupal\organigram\GraphTypeListBuilder;
  *   }
  * )
  */
-class GraphType extends ConfigEntityBase implements GraphTypeInterface {
+class OrganigramNodeType extends ConfigEntityBase implements OrganigramNodeTypeInterface {
 
 
   // ── Entity properties (persisted in config) ────────────────────────────────
@@ -98,7 +98,7 @@ class GraphType extends ConfigEntityBase implements GraphTypeInterface {
    */
   protected string $line_type = 'solid';
 
-  // ── GraphTypeInterface ─────────────────────────────────────────────────────
+  // ── OrganigramNodeTypeInterface ─────────────────────────────────────────────────────
 
   /**
    * {@inheritdoc}

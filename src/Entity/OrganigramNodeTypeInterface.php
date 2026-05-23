@@ -5,13 +5,13 @@ namespace Drupal\organigram\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 
 /**
- * Defines the interface for Graph Type config entities.
+ * Defines the interface for Organigram Node Type config entities.
  *
- * A Graph Type defines the visual appearance of a graph_node in the
+ * A Organigram Node Type defines the visual appearance of a organigram_node in the
  * organigram: box styling (font, colour, background) and connector line
  * styling (weight, colour, dash pattern).
  */
-interface GraphTypeInterface extends ConfigEntityInterface {
+interface OrganigramNodeTypeInterface extends ConfigEntityInterface {
 
   // ── Box ────────────────────────────────────────────────────────────────────
 

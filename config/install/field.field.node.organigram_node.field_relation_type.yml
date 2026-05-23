@@ -3,11 +3,11 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_relation_type
-    - node.type.graph_node
-id: node.graph_node.field_relation_type
+    - node.type.organigram_node
+id: node.organigram_node.field_relation_type
 field_name: field_relation_type
 entity_type: node
-bundle: graph_node
+bundle: organigram_node
 label: 'Relation Type'
 description: 'Relationship type when this node has related (non-hierarchical) nodes.'
 required: false

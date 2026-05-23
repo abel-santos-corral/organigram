@@ -3,12 +3,12 @@ status: true
 dependencies:
   module:
     - node
-id: node.field_graph_node_type
-field_name: field_graph_node_type
+id: node.field_organigram_node_type
+field_name: field_organigram_node_type
 entity_type: node
 type: entity_reference
 settings:
-  target_type: graph_type
+  target_type: organigram_node_type
 module: core
 locked: false
 cardinality: 1

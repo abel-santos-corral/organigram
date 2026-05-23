@@ -1,6 +1,6 @@
 # Organigram
 
-A Drupal 11 module that provides a fully configurable organisational chart system built on a custom **Graph Node** content type and a **Graph Type** config entity, rendered in the browser using [D3.js v7](https://d3js.org/).
+A Drupal 11 module that provides a fully configurable organisational chart system built on a custom **Organigram node** content type and a **Organigram Node Type** config entity, rendered in the browser using [D3.js v7](https://d3js.org/).
 
 ---
 
@@ -12,12 +12,12 @@ A Drupal 11 module that provides a fully configurable organisational chart syste
 4. [Out of Scope](#4-out-of-scope)
 5. [Architecture Summary](#5-architecture-summary)
 6. [Installation](#6-installation)
-7. [The Graph Type Config Entity](#7-the-graph-type-config-entity)
+7. [The Organigram Node Type Config Entity](#7-the-organigram-node-type-config-entity)
    - [What it is](#what-it-is)
    - [Default presets](#default-presets)
-   - [Managing graph types](#managing-graph-types)
+   - [Managing Organigram Node Types](#managing-organigram-node-types)
    - [How it drives the renderer](#how-it-drives-the-renderer)
-8. [The Graph Node Content Type](#8-the-graph-node-content-type)
+8. [The Organigram node Content Type](#8-the-organigram-node-content-type)
 9. [Building an Organigram](#9-building-an-organigram)
 10. [The JSON Data Endpoint](#10-the-json-data-endpoint)
 11. [Permissions](#11-permissions)
@@ -29,14 +29,14 @@ A Drupal 11 module that provides a fully configurable organisational chart syste
 
 The Organigram module lets a site team build and maintain one or more hierarchical organisational charts entirely through the Drupal admin interface — no code changes required after installation.
 
-Each chart is a tree of **Graph Node** content items. Nodes represent any organisational unit: a department, a team, a position, a working group. Each node can carry rich editorial content that appears in a slide-in detail panel when a visitor clicks it:
+Each chart is a tree of **Organigram node** content items. Nodes represent any organisational unit: a department, a team, a position, a working group. Each node can carry rich editorial content that appears in a slide-in detail panel when a visitor clicks it:
 
 - **Position title** and the **name of the responsible person** (or a *Vacant* label if the position is unfilled)
 - **CV** — an optional PDF document link that opens in a new tab
 - **Declaration of Interest** — an optional PDF document link that opens in a new tab
 - **Description & Scope of Work** — one or more titled bullet-point lists, authored through Paragraphs
 
-The visual appearance of every node — font size, font colour, background colour, connector line weight, colour, and dash pattern — is controlled by a **Graph Type** config entity. Webmasters define as many types as the organisation needs and assign one to each node. The D3 renderer reads these values directly from the JSON data endpoint, so visual changes in the admin UI propagate to all organigrams immediately on next page load with no cache rebuild.
+The visual appearance of every node — font size, font colour, background colour, connector line weight, colour, and dash pattern — is controlled by a **Organigram Node Type** config entity. Webmasters define as many types as the organisation needs and assign one to each node. The D3 renderer reads these values directly from the JSON data endpoint, so visual changes in the admin UI propagate to all organigrams immediately on next page load with no cache rebuild.
 
 ---
 
@@ -44,9 +44,9 @@ The visual appearance of every node — font size, font colour, background colou
 
 **Editorial independence.** Content editors create and update organisational data through standard Drupal node forms. No developer involvement is needed to add a node, fill a vacancy, upload a CV, or restructure the hierarchy.
 
-**Webmaster control over visual style.** Graph Types are a Drupal config entity managed at *Administration → Structure → Graph Types*. A webmaster can change the colour scheme of an entire category of nodes (e.g. make all departments purple instead of blue) and the change takes effect everywhere those nodes appear.
+**Webmaster control over visual style.** Organigram Node Types are a Drupal config entity managed at *Administration → Structure → Organigram Node Types*. A webmaster can change the colour scheme of an entire category of nodes (e.g. make all departments purple instead of blue) and the change takes effect everywhere those nodes appear.
 
-**Deployment-safe configuration.** Because Graph Types are config entities they travel through the normal Drupal configuration management workflow: `drush config-export` / `drush config-import`. Visual styles can be developed locally, reviewed in staging, and deployed to production without database imports or manual UI steps.
+**Deployment-safe configuration.** Because Organigram Node Types are config entities they travel through the normal Drupal configuration management workflow: `drush config-export` / `drush config-import`. Visual styles can be developed locally, reviewed in staging, and deployed to production without database imports or manual UI steps.
 
 **Hierarchy without limits.** The tree is built from `field_parent_node` entity references, not taxonomy. There is no depth limit and no restriction on how many children a node may have. The D3 renderer collapses subtrees on double-click so large charts remain navigable.
 
@@ -60,18 +60,18 @@ The visual appearance of every node — font size, font colour, background colou
 
 The following is within scope of this module:
 
-- Definition of the `graph_node` content type with all fields described in this document
+- Definition of the `organigram_node` content type with all fields described in this document
 - Definition of the `scope_work_section` Paragraph type for structured scope content
-- Definition of the `graph_type` config entity and its CRUD admin interface
-- Three default Graph Type presets shipped as install config (`department`, `position`, `role`)
-- A D3.js tree renderer attached to any `graph_node` via `/organigram/{nid}`
-- A JSON data endpoint at `/organigram/{nid}/data` that serialises the full subtree rooted at any node, including resolved Graph Type visual settings
-- Department cluster backgrounds: nodes sharing a Graph Type colour are grouped visually in the SVG
+- Definition of the `organigram_node_type` config entity and its CRUD admin interface
+- Three default Organigram Node Type presets shipped as install config (`department`, `position`, `role`)
+- A D3.js tree renderer attached to any `organigram_node` via `/organigram/{nid}`
+- A JSON data endpoint at `/organigram/{nid}/data` that serialises the full subtree rooted at any node, including resolved Organigram Node Type visual settings
+- Department cluster backgrounds: nodes sharing a Organigram Node Type colour are grouped visually in the SVG
 - A slide-in detail panel showing position title, person name, CV link, Declaration of Interest link, and Scope of Work sections
 - Vacant position handling: when `field_is_vacant` is true, the CV, Declaration of Interest, and responsible person fields are hidden in both the renderer and the JSON output
 - Collapsible subtrees (double-click to collapse/expand)
 - Display order via `field_display_weight`
-- An update hook (`organigram_update_10001`) for migrating existing sites from the previous `list_string` field type to the `entity_reference` → `graph_type` model
+- An update hook (`organigram_update_10001`) for migrating existing sites from the previous `list_string` field type to the `entity_reference` → `organigram_node_type` model
 
 ---
 
@@ -97,16 +97,16 @@ The following is explicitly **not** covered by this module in its current versio
 organigram/
 ├── src/
 │   ├── Entity/
-│   │   ├── GraphType.php           # Config entity (box + line visual settings)
-│   │   └── GraphTypeInterface.php  # Typed interface for GraphType
+│   │   ├── OrganigramNodeType.php           # Config entity (box + line visual settings)
+│   │   └── OrganigramNodeTypeInterface.php  # Typed interface for OrganigramNodeType
 │   ├── Form/
-│   │   └── GraphTypeForm.php       # Add / Edit form with live preview
-│   ├── GraphTypeListBuilder.php    # Admin listing with inline SVG preview
+│   │   └── OrganigramNodeTypeForm.php       # Add / Edit form with live preview
+│   ├── OrganigramNodeTypeListBuilder.php    # Admin listing with inline SVG preview
 │   └── Controller/
 │       └── OrganigramController.php # Display page + JSON data endpoint
 ├── config/
 │   ├── install/                    # Installs on drush en organigram
-│   │   ├── node.type.graph_node.yml
+│   │   ├── node.type.organigram_node.yml
 │   │   ├── field.storage.node.*    # All field storage definitions
 │   │   ├── field.field.node.*      # All field instance definitions
 │   │   ├── paragraphs.paragraphs_type.scope_work_section.yml
@@ -114,11 +114,11 @@ organigram/
 │   │   ├── field.field.paragraph.*
 │   │   ├── core.entity_form_display.*
 │   │   ├── core.entity_view_display.*
-│   │   ├── organigram.graph_type.department.yml  # ┐
-│   │   ├── organigram.graph_type.position.yml    # ├ Default presets
-│   │   └── organigram.graph_type.role.yml        # ┘
+│   │   ├── organigram.organigram_node_type.department.yml  # ┐
+│   │   ├── organigram.organigram_node_type.position.yml    # ├ Default presets
+│   │   └── organigram.organigram_node_type.role.yml        # ┘
 │   └── schema/
-│       └── organigram.schema.yml   # Config schema for GraphType entity
+│       └── organigram.schema.yml   # Config schema for OrganigramNodeType entity
 ├── js/organigram.js                # D3 v7 renderer (Drupal.behaviors)
 ├── css/organigram.css              # Layout, modal, node styles
 └── templates/
@@ -128,17 +128,17 @@ organigram/
 **Data flow:**
 
 ```
-Drupal admin  →  graph_node nodes + graph_type config
+Drupal admin  →  organigram_node nodes + organigram_node_type config
                         ↓
           OrganigramController::data()
           Traverses field_parent_node tree,
-          resolves GraphType entity per node,
+          resolves OrganigramNodeType entity per node,
           serialises to JSON
                         ↓
           /organigram/{nid}/data  (JSON)
                         ↓
           organigram.js  (D3 v7)
-          Reads graph_type_settings per node,
+          Reads organigram_node_type_settings per node,
           renders SVG tree with styled boxes and lines,
           click → slide-in detail panel
 ```
@@ -183,10 +183,10 @@ drush cr
 
 This single command installs all of the following in the correct dependency order:
 
-- The `graph_node` content type and all 22 fields
+- The `organigram_node` content type and all 22 fields
 - The `scope_work_section` Paragraph type and its fields
-- The `graph_type` config entity definition
-- The three default Graph Type presets (`department`, `position`, `role`)
+- The `organigram_node_type` config entity definition
+- The three default Organigram Node Type presets (`department`, `position`, `role`)
 - All form and view display configurations
 
 **4. Verify**
@@ -195,9 +195,9 @@ After enabling, confirm the following exist:
 
 | What | Where |
 |---|---|
-| Graph Types admin | `/admin/structure/graph-type` |
-| Create a Graph Node | `/node/add/graph-node` |
-| Content list | `/admin/content` (filter by Graph Node) |
+| Organigram Node Types admin | `/admin/structure/organigram-node-type` |
+| Create a Organigram node | `/node/add/organigram-node` |
+| Content list | `/admin/content` (filter by Organigram node) |
 
 **5. (Optional) Configure file system for private files**
 
@@ -215,13 +215,13 @@ drush cr
 
 ---
 
-## 7. The Graph Type Config Entity
+## 7. The Organigram Node Type Config Entity
 
 ### What it is
 
-A **Graph Type** is a named visual style definition. It tells the organigram renderer exactly how to draw nodes of that category and the connector lines leading to them.
+A **Organigram Node Type** is a named visual style definition. It tells the organigram renderer exactly how to draw nodes of that category and the connector lines leading to them.
 
-Each Graph Type stores:
+Each Organigram Node Type stores:
 
 | Property | Field | Example |
 |---|---|---|
@@ -234,14 +234,14 @@ Each Graph Type stores:
 | **Line — colour** | `line_color` | `#0055AA` |
 | **Line — type** | `line_type` | `solid` / `dashed` / `dotted` / `dashdot` |
 
-Graph Types are **configuration**, not content. This has two important consequences:
+Organigram Node Types are **configuration**, not content. This has two important consequences:
 
 1. They are managed with `drush config-export` / `drush config-import` and travel through your deployment pipeline like any other Drupal configuration.
 2. They do not have revisions, translations, or workflow states — they are global settings.
 
 ### Default presets
 
-Three Graph Types are shipped with the module as install configuration. They are created automatically on `drush en organigram` and are designed to cover the most common organigram structure immediately:
+Three Organigram Node Types are shipped with the module as install configuration. They are created automatically on `drush en organigram` and are designed to cover the most common organigram structure immediately:
 
 #### `department`
 ```yaml
@@ -253,7 +253,7 @@ line_size: '2'
 line_color: '#0055AA'
 line_type: solid
 ```
-Used for top-level grouping nodes. The D3 renderer detects nodes that share a Graph Type background colour and draws a shaded cluster rectangle behind them, labelled with the top node's title. This makes departments visually distinct sections in the chart.
+Used for top-level grouping nodes. The D3 renderer detects nodes that share a Organigram Node Type background colour and draws a shaded cluster rectangle behind them, labelled with the top node's title. This makes departments visually distinct sections in the chart.
 
 #### `position`
 ```yaml
@@ -279,26 +279,26 @@ line_type: dashed
 ```
 A functional role as distinct from a formal position. Off-white background and a dashed connector line signal a softer relationship in the hierarchy.
 
-### Managing graph types
+### Managing Organigram Node Types
 
-Navigate to **Administration → Structure → Graph Types** (`/admin/structure/graph-type`).
+Navigate to **Administration → Structure → Organigram Node Types** (`/admin/structure/organigram-node-type`).
 
 The listing page shows each type with a live SVG line preview and a styled "Aa" sample box so you can see the result without opening the edit form.
 
-To **add a type** — for example, a `squad` for an agile organisation — click **Add Graph Type**, give it a machine name and label, pick your colours with the native colour pickers, choose a line weight and style, and save. The new type is immediately available in the **Graph Node Type** field on all `graph_node` edit forms.
+To **add a type** — for example, a `squad` for an agile organisation — click **Add Organigram Node Type**, give it a machine name and label, pick your colours with the native colour pickers, choose a line weight and style, and save. The new type is immediately available in the **Organigram node Type** field on all `organigram_node` edit forms.
 
 To **remove a type** that is in use, Drupal will warn you that nodes referencing it will lose their type assignment. Reassign nodes first.
 
 ### How it drives the renderer
 
-When the D3 renderer fetches `/organigram/{nid}/data`, every node in the JSON includes a `graph_type_settings` object:
+When the D3 renderer fetches `/organigram/{nid}/data`, every node in the JSON includes a `organigram_node_type_settings` object:
 
 ```json
 {
   "id": 42,
   "title": "Head of Engineering",
-  "graph_type": "position",
-  "graph_type_settings": {
+  "organigram_node_type": "position",
+  "organigram_node_type_settings": {
     "id": "position",
     "label": "Position",
     "box_font_size": 11,
@@ -312,13 +312,13 @@ When the D3 renderer fetches `/organigram/{nid}/data`, every node in the JSON in
 }
 ```
 
-The renderer applies these values directly to each SVG `<rect>`, `<text>`, and `<line>` element. There are no colour or size values hardcoded in `organigram.js`. Changing a Graph Type in the admin UI changes the rendering for every node of that type on every organigram on the site, on the next page load.
+The renderer applies these values directly to each SVG `<rect>`, `<text>`, and `<line>` element. There are no colour or size values hardcoded in `organigram.js`. Changing a Organigram Node Type in the admin UI changes the rendering for every node of that type on every organigram on the site, on the next page load.
 
 ---
 
-## 8. The Graph Node Content Type
+## 8. The Organigram node Content Type
 
-Machine name: `graph_node`
+Machine name: `organigram_node`
 
 Each node is one box in the organigram. A complete field reference:
 
@@ -327,15 +327,15 @@ Each node is one box in the organigram. A complete field reference:
 | Label           | Machine name            | Type | Required |
 |-----------------|-------------------------|---|---|
 | Title           | `title`                 | Core | ✅ |
-| Graph Node Type | `field_graph_node_type` | Entity reference → `graph_type` | ✅ |
+| Organigram node Type | `field_organigram_node_type` | Entity reference → `organigram_node_type` | ✅ |
 | Hidden          | `field_is_hidden` | Boolean | |
 
 ### B. Hierarchy
 
 | Label | Machine name | Type | Notes |
 |---|---|---|---|
-| Parent Node | `field_parent_node` | Entity reference → `graph_node` | Leave empty for the root |
-| Related Nodes | `field_related_nodes` | Entity reference → `graph_node` (multiple) | Dotted lines, matrix, chapters |
+| Parent Node | `field_parent_node` | Entity reference → `organigram_node` | Leave empty for the root |
+| Related Nodes | `field_related_nodes` | Entity reference → `organigram_node` (multiple) | Dotted lines, matrix, chapters |
 | Relation Type | `field_relation_type` | List (text) | `hierarchical`, `functional`, `project`, `chapter`, `advisory`… |
 
 ### C. Visual
@@ -383,9 +383,9 @@ Each `scope_work_section` paragraph contains:
 
 ## 9. Building an Organigram
 
-1. **Create the root node.** Go to `/node/add/graph-node`. Leave *Parent Node* empty. Assign a Graph Type (e.g. `department`). This is the top of your chart.
+1. **Create the root node.** Go to `/node/add/organigram-node`. Leave *Parent Node* empty. Assign a Organigram Node Type (e.g. `department`). This is the top of your chart.
 
-2. **Create child nodes.** For each department head, team, or position, create a new Graph Node and set its *Parent Node* to the node above it in the hierarchy.
+2. **Create child nodes.** For each department head, team, or position, create a new Organigram node and set its *Parent Node* to the node above it in the hierarchy.
 
 3. **Use Display Order** (`field_display_weight`) to control the left-to-right order of siblings. Nodes with lower numbers appear first.
 
@@ -403,7 +403,7 @@ Each `scope_work_section` paragraph contains:
 GET /organigram/{nid}/data
 ```
 
-Returns the complete subtree rooted at `{nid}` as JSON. The structure mirrors the `field_parent_node` hierarchy recursively (maximum depth 15). Each node object includes all fields, the resolved `graph_type_settings` object, and a `children` array.
+Returns the complete subtree rooted at `{nid}` as JSON. The structure mirrors the `field_parent_node` hierarchy recursively (maximum depth 15). Each node object includes all fields, the resolved `organigram_node_type_settings` object, and a `children` array.
 
 Requires `access content` permission. Respects Drupal node access controls — unpublished nodes are excluded.
 
@@ -416,15 +416,15 @@ Useful for debugging, for building alternative frontends, or for integrating wit
 | Permission | Role | Description |
 |---|---|---|
 | `access content` | Authenticated / Anonymous | View organigrams and the JSON endpoint |
-| `create graph_node content` | Editor | Create new nodes |
-| `edit any graph_node content` | Editor | Edit existing nodes |
-| `administer organigram` | Webmaster | Manage Graph Types at `/admin/structure/graph-type` |
+| `create organigram_node content` | Editor | Create new nodes |
+| `edit any organigram_node content` | Editor | Edit existing nodes |
+| `administer organigram` | Webmaster | Manage Organigram Node Types at `/admin/structure/organigram-node-type` |
 
 ---
 
 ## 12. Updating from v1
 
-If you installed the module before the `graph_type` config entity was introduced (i.e. when `field_graph_node_type` was a `list_string` field), run the provided update hook:
+If you installed the module before the `organigram_node_type` config entity was introduced (i.e. when `field_organigram_node_type` was a `list_string` field), run the provided update hook:
 
 ```bash
 drush updb -y
@@ -433,10 +433,10 @@ drush cr
 
 The update hook `organigram_update_10001()` performs the following steps automatically:
 
-1. Reads all existing `field_graph_node_type` values from the database before touching anything.
+1. Reads all existing `field_organigram_node_type` values from the database before touching anything.
 2. Deletes the old `list_string` field storage and instance configuration.
 3. Drops the old database column.
 4. Re-installs the new `entity_reference` field storage and instance from `config/install`.
-5. Re-inserts the saved values — the old machine-name values (`department`, `position`, etc.) are identical to the new Graph Type IDs, so no data transformation is needed.
+5. Re-inserts the saved values — the old machine-name values (`department`, `position`, etc.) are identical to the new Organigram Node Type IDs, so no data transformation is needed.
 
-> **Note:** The update hook also triggers `config.installer` to install the default Graph Type presets if they do not already exist. Existing values not matching a preset ID (e.g. `squad`, `tribe`) will result in nodes with a null graph type. These nodes must be reassigned manually after the update.
+> **Note:** The update hook also triggers `config.installer` to install the default Organigram Node Type presets if they do not already exist. Existing values not matching a preset ID (e.g. `squad`, `tribe`) will result in nodes with a null Organigram Node Type. These nodes must be reassigned manually after the update.

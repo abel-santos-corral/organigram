@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Organigram module — Graph Node CT, Paragraph type, and D3 renderer.
+ * Organigram module — Organigram node CT, Paragraph type, and D3 renderer.
  */
 
 use Drupal\Core\Entity\EntityInterface;

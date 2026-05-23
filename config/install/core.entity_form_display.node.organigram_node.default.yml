@@ -2,24 +2,24 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.graph_node.field_collapsed_default
-    - field.field.node.graph_node.field_cv_document
-    - field.field.node.graph_node.field_declaration_interest
-    - field.field.node.graph_node.field_display_weight
-    - field.field.node.graph_node.field_end_date
-    - field.field.node.graph_node.field_graph_node_type
-    - field.field.node.graph_node.field_internal_notes
-    - field.field.node.graph_node.field_is_hidden
-    - field.field.node.graph_node.field_is_vacant
-    - field.field.node.graph_node.field_parent_node
-    - field.field.node.graph_node.field_position_title
-    - field.field.node.graph_node.field_related_nodes
-    - field.field.node.graph_node.field_relation_type
-    - field.field.node.graph_node.field_responsible_name
-    - field.field.node.graph_node.field_responsible_photo
-    - field.field.node.graph_node.field_scope_work
-    - field.field.node.graph_node.field_start_date
-    - node.type.graph_node
+    - field.field.node.organigram_node.field_collapsed_default
+    - field.field.node.organigram_node.field_cv_document
+    - field.field.node.organigram_node.field_declaration_interest
+    - field.field.node.organigram_node.field_display_weight
+    - field.field.node.organigram_node.field_end_date
+    - field.field.node.organigram_node.field_organigram_node_type
+    - field.field.node.organigram_node.field_internal_notes
+    - field.field.node.organigram_node.field_is_hidden
+    - field.field.node.organigram_node.field_is_vacant
+    - field.field.node.organigram_node.field_parent_node
+    - field.field.node.organigram_node.field_position_title
+    - field.field.node.organigram_node.field_related_nodes
+    - field.field.node.organigram_node.field_relation_type
+    - field.field.node.organigram_node.field_responsible_name
+    - field.field.node.organigram_node.field_responsible_photo
+    - field.field.node.organigram_node.field_scope_work
+    - field.field.node.organigram_node.field_start_date
+    - node.type.organigram_node
   module:
     - datetime
     - file
@@ -28,9 +28,9 @@ dependencies:
     - options
     - paragraphs
     - text
-id: node.graph_node.default
+id: node.organigram_node.default
 targetEntityType: node
-bundle: graph_node
+bundle: organigram_node
 mode: default
 content:
   title:
@@ -59,7 +59,7 @@ content:
     settings:
       display_label: true
     third_party_settings: {}
-  field_graph_node_type:
+  field_organigram_node_type:
     type: options_select
     weight: -10
     settings: {}
@@ -160,7 +160,7 @@ content:
       closed_mode_threshold: 0
       add_mode: dropdown
       form_display_mode: default
-      default_paragraph_type: scope_work_section
+      default_paraorganigram_node_type: scope_work_section
       features:
         duplicate: duplicate
         collapse_edit_all: collapse_edit_all

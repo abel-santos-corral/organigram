@@ -12,19 +12,19 @@ use Drupal\Core\Field\BaseFieldDefinition;
  */
 function organigram_install(): void {
   \Drupal::messenger()->addStatus(t(
-    'Organigram installed. Visit <a href=":url">Graph Types</a> to manage node visual styles.',
-    [':url' => '/admin/structure/graph-type']
+    'Organigram installed. Visit <a href=":url">Organigram Node Types</a> to manage node visual styles.',
+    [':url' => '/admin/structure/organigram-node-type']
   ));
 }
 
 /**
- * Migrate field_graph_node_type from list_string to entity_reference (graph_type).
+ * Migrate field_organigram_node_type from list_string to entity_reference (organigram_node_type).
  *
- * Run this on existing sites that installed organigram before the graph_type
+ * Run this on existing sites that installed organigram before the organigram_node_type
  * config entity was introduced.  Fresh installs do not need this update.
  *
  * The old machine values (department, unit, position …) are identical to the
- * new graph_type IDs, so no data transformation is needed — only the field
+ * new organigram_node_type IDs, so no data transformation is needed — only the field
  * storage definition changes.
  */
 function organigram_update_10001(): void {
@@ -35,50 +35,50 @@ function organigram_update_10001(): void {
   // Step 1: collect existing values before we touch the field.
   $database = \Drupal::database();
   $existing = [];
-  if ($database->schema()->tableExists('node__field_graph_node_type')) {
-    $existing = $database->select('node__field_graph_node_type', 'f')
-      ->fields('f', ['entity_id', 'revision_id', 'delta', 'field_graph_node_type_value'])
+  if ($database->schema()->tableExists('node__field_organigram_node_type')) {
+    $existing = $database->select('node__field_organigram_node_type', 'f')
+      ->fields('f', ['entity_id', 'revision_id', 'delta', 'field_organigram_node_type_value'])
       ->execute()
       ->fetchAll();
   }
 
   // Step 2: delete the old field storage + instance config.
-  $old_storage = $config_factory->getEditable('field.storage.node.field_graph_node_type');
-  $old_field   = $config_factory->getEditable('field.field.node.graph_node.field_graph_node_type');
+  $old_storage = $config_factory->getEditable('field.storage.node.field_organigram_node_type');
+  $old_field   = $config_factory->getEditable('field.field.node.organigram_node.field_organigram_node_type');
   $old_storage->delete();
   $old_field->delete();
 
   // Drop the old database column.
-  if ($database->schema()->tableExists('node__field_graph_node_type')) {
-    $database->schema()->dropTable('node__field_graph_node_type');
+  if ($database->schema()->tableExists('node__field_organigram_node_type')) {
+    $database->schema()->dropTable('node__field_organigram_node_type');
   }
-  if ($database->schema()->tableExists('node_revision__field_graph_node_type')) {
-    $database->schema()->dropTable('node_revision__field_graph_node_type');
+  if ($database->schema()->tableExists('node_revision__field_organigram_node_type')) {
+    $database->schema()->dropTable('node_revision__field_organigram_node_type');
   }
 
   // Step 3: install new storage + instance configs from config/install.
   $config_installer = \Drupal::service('config.installer');
   $config_installer->installDefaultConfig('module', 'organigram');
 
-  // Step 4: re-insert data — old string values map 1:1 to new graph_type IDs.
-  // The new column is field_graph_node_type_target_id (entity_reference).
-  if (!empty($existing) && $database->schema()->tableExists('node__field_graph_node_type')) {
+  // Step 4: re-insert data — old string values map 1:1 to new organigram_node_type IDs.
+  // The new column is field_organigram_node_type_target_id (entity_reference).
+  if (!empty($existing) && $database->schema()->tableExists('node__field_organigram_node_type')) {
     foreach ($existing as $row) {
-      $database->insert('node__field_graph_node_type')
+      $database->insert('node__field_organigram_node_type')
         ->fields([
-          'bundle'                              => 'graph_node',
+          'bundle'                              => 'organigram_node',
           'deleted'                             => 0,
           'entity_id'                           => $row->entity_id,
           'revision_id'                         => $row->revision_id,
           'langcode'                            => 'en',
           'delta'                               => $row->delta,
-          'field_graph_node_type_target_id'     => $row->field_graph_node_type_value,
+          'field_organigram_node_type_target_id'     => $row->field_organigram_node_type_value,
         ])
         ->execute();
     }
   }
 
   \Drupal::messenger()->addStatus(t(
-    'field_graph_node_type migrated to entity_reference → graph_type. Review nodes at /admin/content.'
+    'field_organigram_node_type migrated to entity_reference → organigram_node_type. Review nodes at /admin/content.'
   ));
 }

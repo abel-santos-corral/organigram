@@ -3,8 +3,8 @@ status: true
 dependencies:
   module:
     - node
-name: 'Graph Node'
-type: graph_node
+name: 'Organigram node'
+type: organigram_node
 description: 'Organigram node representing departments, positions, roles, units, squads, etc.'
 help: 'Set Parent Node to define the hierarchy. Use Description & Scope of Work paragraphs for modal content.'
 new_revision: false

@@ -3,11 +3,11 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_position_title
-    - node.type.graph_node
-id: node.graph_node.field_position_title
+    - node.type.organigram_node
+id: node.organigram_node.field_position_title
 field_name: field_position_title
 entity_type: node
-bundle: graph_node
+bundle: organigram_node
 label: 'Position Title'
 description: 'Display title shown in the modal (e.g. Head of Unit). Falls back to node title.'
 required: false

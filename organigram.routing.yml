@@ -1,4 +1,4 @@
-# Renders the full organigram page for a root graph_node.
+# Renders the full organigram page for a root organigram_node.
 organigram.display:
   path: '/organigram/{node}'
   defaults:

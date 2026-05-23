@@ -3,11 +3,11 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_collapsed_default
-    - node.type.graph_node
-id: node.graph_node.field_collapsed_default
+    - node.type.organigram_node
+id: node.organigram_node.field_collapsed_default
 field_name: field_collapsed_default
 entity_type: node
-bundle: graph_node
+bundle: organigram_node
 label: 'Collapsed by Default'
 description: 'Collapses the node in the organigram.'
 required: false

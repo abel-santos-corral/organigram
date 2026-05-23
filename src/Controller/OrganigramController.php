@@ -7,7 +7,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\organigram\Entity\GraphTypeInterface;
+use Drupal\organigram\Entity\OrganigramNodeTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,11 +16,11 @@ use Symfony\Component\HttpFoundation\Request;
  * Handles the organigram display page and JSON data endpoint.
  *
  * The /organigram/{nid}/data endpoint returns the complete hierarchical tree.
- * Each node includes a `graph_type_settings` object with visual properties
- * defined in the Graph Type config entity:
+ * Each node includes a `organigram_node_type_settings` object with visual properties
+ * defined in the Organigram Node Type config entity:
  *
  * @code
- * "graph_type_settings": {
+ * "organigram_node_type_settings": {
  *   "id": "department",
  *   "label": "Department",
  *   "box_font_size": 11,
@@ -103,9 +103,9 @@ class OrganigramController extends ControllerBase {
       'title'  => $node->getTitle(),
       'is_hidden' => $this->fieldBool($node, 'field_is_hidden', FALSE),
 
-      // Graph Type replaces the old hardcoded list — includes full visual spec.
-      'graph_type'          => NULL,
-      'graph_type_settings' => NULL,
+      // Organigram Node Type replaces the old hardcoded list — includes full visual spec.
+      'organigram_node_type'          => NULL,
+      'organigram_node_type_settings' => NULL,
 
       'display_weight' => (int) ($this->fieldString($node, 'field_display_weight') ?? 0),
       'collapsed'      => $this->fieldBool($node, 'field_collapsed_default'),
@@ -125,13 +125,13 @@ class OrganigramController extends ControllerBase {
       'children'      => [],
     ];
 
-    // ── Resolve GraphType config entity ───────────────────────────────────────
-    if ($node->hasField('field_graph_node_type') && !$node->get('field_graph_node_type')->isEmpty()) {
-      /** @var \Drupal\organigram\Entity\GraphTypeInterface|null $gt */
-      $gt = $node->get('field_graph_node_type')->entity;
-      if ($gt instanceof GraphTypeInterface) {
-        $data['graph_type'] = $gt->id();
-        $data['graph_type_settings'] = [
+    // ── Resolve OrganigramNodeType config entity ───────────────────────────────────────
+    if ($node->hasField('field_organigram_node_type') && !$node->get('field_organigram_node_type')->isEmpty()) {
+      /** @var \Drupal\organigram\Entity\OrganigramNodeTypeInterface|null $gt */
+      $gt = $node->get('field_organigram_node_type')->entity;
+      if ($gt instanceof OrganigramNodeTypeInterface) {
+        $data['organigram_node_type'] = $gt->id();
+        $data['organigram_node_type_settings'] = [
           'id'             => $gt->id(),
           'label'          => $gt->label(),
           'box_font_size'  => $gt->getBoxFontSize(),
@@ -186,7 +186,7 @@ class OrganigramController extends ControllerBase {
   protected function buildChildren(NodeInterface $node, int $depth): array {
     $storage = $this->entityTypeManager->getStorage('node');
     $child_ids = $storage->getQuery()
-      ->condition('type', 'graph_node')
+      ->condition('type', 'organigram_node')
       ->condition('field_parent_node', $node->id())
       ->condition('status', NodeInterface::PUBLISHED)
       ->condition('field_is_hidden', 0)
@@ -220,11 +220,11 @@ class OrganigramController extends ControllerBase {
         continue;
       }
       $gt = NULL;
-      if ($related->hasField('field_graph_node_type') && !$related->get('field_graph_node_type')->isEmpty()) {
-        $gt_entity = $related->get('field_graph_node_type')->entity;
-        $gt = $gt_entity instanceof GraphTypeInterface ? $gt_entity->id() : NULL;
+      if ($related->hasField('field_organigram_node_type') && !$related->get('field_organigram_node_type')->isEmpty()) {
+        $gt_entity = $related->get('field_organigram_node_type')->entity;
+        $gt = $gt_entity instanceof OrganigramNodeTypeInterface ? $gt_entity->id() : NULL;
       }
-      $out[] = ['id' => (int) $related->id(), 'title' => $related->getTitle(), 'graph_type' => $gt];
+      $out[] = ['id' => (int) $related->id(), 'title' => $related->getTitle(), 'organigram_node_type' => $gt];
     }
     return $out;
   }

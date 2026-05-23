@@ -2,12 +2,12 @@ langcode: en
 status: true
 dependencies:
   config:
-    - node.type.graph_node
+    - node.type.organigram_node
   module:
     - node
-id: node.graph_node.default
+id: node.organigram_node.default
 targetEntityType: node
-bundle: graph_node
+bundle: organigram_node
 mode: default
 content:
   title:
@@ -17,7 +17,7 @@ content:
     settings:
       link_to_entity: true
     third_party_settings: {}
-  field_graph_node_type:
+  field_organigram_node_type:
     label: above
     type: list_default
     weight: 1

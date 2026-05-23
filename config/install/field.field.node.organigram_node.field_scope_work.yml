@@ -3,15 +3,15 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_scope_work
-    - node.type.graph_node
+    - node.type.organigram_node
     - paragraphs.paragraphs_type.scope_work_section
   module:
     - entity_reference_revisions
     - paragraphs
-id: node.graph_node.field_scope_work
+id: node.organigram_node.field_scope_work
 field_name: field_scope_work
 entity_type: node
-bundle: graph_node
+bundle: organigram_node
 label: 'Description & Scope of Work'
 description: 'Add one or more titled bullet-point sections for the modal panel.'
 required: false

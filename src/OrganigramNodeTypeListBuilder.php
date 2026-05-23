@@ -6,11 +6,11 @@ use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Renders the admin list of Graph Type config entities.
+ * Renders the admin list of Organigram Node Type config entities.
  *
- * Accessible at /admin/structure/graph-type.
+ * Accessible at /admin/structure/organigram-node-type.
  */
-class GraphTypeListBuilder extends ConfigEntityListBuilder {
+class OrganigramNodeTypeListBuilder extends ConfigEntityListBuilder {
 
   /**
    * {@inheritdoc}
@@ -28,7 +28,7 @@ class GraphTypeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity): array {
-    /** @var \Drupal\organigram\Entity\GraphTypeInterface $entity */
+    /** @var \Drupal\organigram\Entity\OrganigramNodeTypeInterface $entity */
 
     $box_preview = sprintf(
       '<span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:%dpx;color:%s;background:%s;border:1px solid #ccc;">%s</span>',
@@ -67,8 +67,8 @@ class GraphTypeListBuilder extends ConfigEntityListBuilder {
   public function render(): array {
     $build = parent::render();
     $build['table']['#empty'] = $this->t(
-      'No graph types defined yet. <a href=":url">Add a graph type</a>.',
-      [':url' => '/admin/structure/graph-type/add'],
+      'No Organigram Node Types defined yet. <a href=":url">Add a Organigram Node Type</a>.',
+      [':url' => '/admin/structure/organigram-node-type/add'],
     );
     return $build;
   }

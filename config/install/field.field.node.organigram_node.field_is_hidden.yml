@@ -3,11 +3,11 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_is_hidden
-    - node.type.graph_node
-id: node.graph_node.field_is_hidden
+    - node.type.organigram_node
+id: node.organigram_node.field_is_hidden
 field_name: field_is_hidden
 entity_type: node
-bundle: graph_node
+bundle: organigram_node
 label: 'Hidden'
 description: 'Hides the node in the organigram (along with its child nodes).'
 required: false

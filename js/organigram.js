@@ -1,6 +1,6 @@
 /**
  * @file
- * organigram.js — D3 v7 organigram renderer for the Graph Node content type.
+ * organigram.js — D3 v7 organigram renderer for the Organigram node content type.
  *
  * Drupal behaviour: attaches once to #organigram-container.
  * Reads drupalSettings.organigram.dataUrl for the JSON endpoint.
@@ -119,7 +119,7 @@
       // ── Department cluster backgrounds ─────────────────────────────────
       drawClusters(g, root);
 
-      // ── Links — styled from the TARGET node's graph_type_settings ────────
+      // ── Links — styled from the TARGET node's organigram_node_type_settings ────────
       g.selectAll('.org-link')
         .data(root.links())
         .join('path')
@@ -131,7 +131,7 @@
           return `M${sx},${sy}V${my}H${ex}V${ey}`;
         })
         .each(function (d) {
-          const gts = d.target.data.graph_type_settings;
+          const gts = d.target.data.organigram_node_type_settings;
           const sel = d3.select(this);
           if (gts) {
             sel.attr('stroke', gts.line_color)
@@ -163,14 +163,14 @@
           if (event.key === 'Enter' || event.key === ' ') openModal(modal, d.data);
         });
 
-      // Node rectangle — styled from graph_type_settings when available.
+      // Node rectangle — styled from organigram_node_type_settings when available.
       nodeG.append('rect')
         .attr('class', d => `org-rect${d.data.vacant ? ' org-rect--vacant' : ''}`)
         .attr('x', -NODE_W / 2).attr('y', -NODE_H / 2)
         .attr('width', NODE_W).attr('height', NODE_H)
         .attr('rx', 7)
         .each(function (d) {
-          const gts = d.data.graph_type_settings;
+          const gts = d.data.organigram_node_type_settings;
           const sel = d3.select(this);
           if (gts) {
             if (!d.data.vacant) sel.attr('fill', gts.box_background);
@@ -181,7 +181,7 @@
       // Text: role title (wrapped if needed) + person name or "Vacant".
       nodeG.each(function (d) {
         const el  = d3.select(this);
-        const gts = d.data.graph_type_settings;
+        const gts = d.data.organigram_node_type_settings;
         const fontColor = gts?.box_font_color ?? null;
         const fontSize  = gts?.box_font_size  ?? null;
 
@@ -241,13 +241,13 @@
 
   // ── Department cluster drawing ─────────────────────────────────────────────
   function drawClusters(g, root) {
-    // Group nodes by graph_type id (preferred).
+    // Group nodes by organigram_node_type id (preferred).
     const groups = {};
     root.descendants().forEach(d => {
-      const key = d.data.graph_type;
+      const key = d.data.organigram_node_type;
       if (!key) return;
       if (!groups[key]) {
-        const color = d.data.graph_type_settings?.box_background || '#e0e0e0';
+        const color = d.data.organigram_node_type_settings?.box_background || '#e0e0e0';
         groups[key] = { nodes: [], color };
       }
       groups[key].nodes.push(d);
@@ -326,7 +326,7 @@
   function renderModalContent(d) {
     const vacant = d.vacant;
     const ini    = d.responsible_name ? d.responsible_name.split(' ').map(w => w[0]).join('') : '?';
-    const gts    = d.graph_type_settings;
+    const gts    = d.organigram_node_type_settings;
     const color  = gts?.box_background || '#888';
     const tint   = hexTint(color, 0.2);
 

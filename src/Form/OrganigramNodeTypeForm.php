@@ -4,16 +4,16 @@ namespace Drupal\organigram\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\organigram\Entity\GraphType;
+use Drupal\organigram\Entity\OrganigramNodeType;
 
 /**
- * Add / Edit form for the Graph Type config entity.
+ * Add / Edit form for the Organigram Node Type config entity.
  *
  * Renders a live preview box and line that update as the webmaster
  * adjusts the form values, so they can see exactly what a node of
  * this type will look like in the organigram before saving.
  */
-class GraphTypeForm extends EntityForm {
+class OrganigramNodeTypeForm extends EntityForm {
 
   /**
    * {@inheritdoc}
@@ -21,7 +21,7 @@ class GraphTypeForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state): array {
     $form = parent::form($form, $form_state);
 
-    /** @var \Drupal\organigram\Entity\GraphTypeInterface $gt */
+    /** @var \Drupal\organigram\Entity\OrganigramNodeTypeInterface $gt */
     $gt = $this->entity;
 
     // ── Identity ─────────────────────────────────────────────────────────────
@@ -39,7 +39,7 @@ class GraphTypeForm extends EntityForm {
       '#default_value' => $gt->id(),
       '#maxlength'     => 32,
       '#machine_name'  => [
-        'exists'    => [GraphType::class, 'load'],
+        'exists'    => [OrganigramNodeType::class, 'load'],
         'source'    => ['label'],
       ],
       '#disabled'      => !$gt->isNew(),
@@ -89,7 +89,7 @@ class GraphTypeForm extends EntityForm {
     $form['line']['line_size'] = [
       '#type'          => 'select',
       '#title'         => $this->t('Width'),
-      '#options'       => GraphType::lineSizeOptions(),
+      '#options'       => OrganigramNodeType::lineSizeOptions(),
       '#default_value' => $gt->getLineSize(),
       '#required'      => TRUE,
     ];
@@ -104,7 +104,7 @@ class GraphTypeForm extends EntityForm {
     $form['line']['line_type'] = [
       '#type'          => 'select',
       '#title'         => $this->t('Type'),
-      '#options'       => GraphType::lineTypeOptions(),
+      '#options'       => OrganigramNodeType::lineTypeOptions(),
       '#default_value' => $gt->getLineType(),
       '#required'      => TRUE,
     ];
@@ -118,7 +118,7 @@ class GraphTypeForm extends EntityForm {
 
     $form['preview']['canvas'] = [
       '#markup' => $this->buildPreviewMarkup($gt),
-      '#prefix' => '<div id="graph-type-preview">',
+      '#prefix' => '<div id="organigram-node-type-preview">',
       '#suffix' => '</div>',
     ];
 
@@ -133,7 +133,7 @@ class GraphTypeForm extends EntityForm {
    * Builds a static SVG preview of a node and its connector line.
    */
   protected function buildPreviewMarkup(mixed $gt): string {
-    if (!$gt instanceof \Drupal\organigram\Entity\GraphTypeInterface) {
+    if (!$gt instanceof \Drupal\organigram\Entity\OrganigramNodeTypeInterface) {
       return '';
     }
 
@@ -160,7 +160,7 @@ class GraphTypeForm extends EntityForm {
   <line x1="150" y1="54" x2="150" y2="96"
         stroke="{$lc}" stroke-width="{$lw}" stroke-dasharray="{$da}"/>
 
-  <!-- This graph type's node -->
+  <!-- This Organigram Node Type's node -->
   <rect x="90" y="96" width="120" height="44" rx="6"
         fill="{$bg}" stroke="{$lc}" stroke-width="{$lw}"/>
   <text x="150" y="114" text-anchor="middle" dominant-baseline="middle"
@@ -191,8 +191,8 @@ SVG;
 
     $label = $this->entity->label();
     match ($status) {
-      SAVED_NEW      => $this->messenger()->addStatus($this->t('Graph type %label has been created.', ['%label' => $label])),
-      SAVED_UPDATED  => $this->messenger()->addStatus($this->t('Graph type %label has been updated.', ['%label' => $label])),
+      SAVED_NEW      => $this->messenger()->addStatus($this->t('Organigram Node Type %label has been created.', ['%label' => $label])),
+      SAVED_UPDATED  => $this->messenger()->addStatus($this->t('Organigram Node Type %label has been updated.', ['%label' => $label])),
     };
 
     $form_state->setRedirectUrl($this->entity->toUrl('collection'));
