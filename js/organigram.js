@@ -328,14 +328,13 @@
 
   function renderModalContent(d) {
     const vacant = d.vacant;
-    const ini    = d.responsible_name ? d.responsible_name.split(' ').map(w => w[0]).join('') : '?';
-    const gts    = d.organigram_node_type_settings;
-    const color  = gts?.box_background || '#888';
-    const tint   = hexTint(color, 0.2);
+    const photo = d.responsible_photo
+      ? `<img class="org-modal__photo" src="${escHtml(d.responsible_photo)}" alt="${escHtml(d.responsible_name || '')}">`
+      : '';
 
     let html = `
       <div class="org-modal__header">
-        <div class="org-modal__avatar" style="background:${tint};border-color:${color};color:${color};">${ini}</div>
+        ${photo}
         <div class="org-modal__title-wrap">
           <h2 class="org-modal__role">${escHtml(d.position_title || d.title)}</h2>
           <p class="org-modal__person ${vacant ? 'is-vacant' : ''}">${vacant ? 'Vacant' : escHtml(d.responsible_name || '')}</p>
