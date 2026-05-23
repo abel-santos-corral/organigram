@@ -34,7 +34,7 @@ Each chart is a tree of **Organigram node** content items. Nodes represent any o
 - **Position title** and the **name of the responsible person** (or a *Vacant* label if the position is unfilled)
 - **CV** — an optional PDF document link that opens in a new tab
 - **Declaration of Interest** — an optional PDF document link that opens in a new tab
-- **Description & Scope of Work** — one or more titled bullet-point lists, authored through Paragraphs
+- **Description & Scope of Work** — one or more titled bullet-point lists, authored through CKEditor
 
 The visual appearance of every node — font size, font colour, background colour, connector line weight, colour, and dash pattern — is controlled by a **Organigram Node Type** config entity. Webmasters define as many types as the organisation needs and assign one to each node. The D3 renderer reads these values directly from the JSON data endpoint, so visual changes in the admin UI propagate to all organigrams immediately on next page load with no cache rebuild.
 
@@ -109,7 +109,6 @@ organigram/
 │   │   ├── node.type.organigram_node.yml
 │   │   ├── field.storage.node.*    # All field storage definitions
 │   │   ├── field.field.node.*      # All field instance definitions
-│   │   ├── paragraphs.paragraphs_type.scope_work_section.yml
 │   │   ├── field.storage.paragraph.*
 │   │   ├── field.field.paragraph.*
 │   │   ├── core.entity_form_display.*
@@ -153,7 +152,6 @@ Drupal admin  →  organigram_node nodes + organigram_node_type config
 |---|--------------------------------------|
 | Drupal | ^11 \|\| ^12                         |
 | PHP | ^8.2                                 |
-| [Paragraphs](https://www.drupal.org/project/paragraphs) | ^1.15                                |
 | Node.js / npm | Not required — D3 is loaded from CDN |
 
 ### Steps
@@ -168,13 +166,7 @@ cp -r organigram web/modules/custom/organigram
 composer require drupal/organigram
 ```
 
-**2. Install the Paragraphs dependency**
-
-```bash
-composer require drupal/paragraphs
-```
-
-**3. Enable the module**
+**2. Enable the module**
 
 ```bash
 drush en organigram -y
@@ -189,7 +181,7 @@ This single command installs all of the following in the correct dependency orde
 - The three default Organigram Node Type presets (`department`, `position`, `role`)
 - All form and view display configurations
 
-**4. Verify**
+**3. Verify**
 
 After enabling, confirm the following exist:
 
@@ -199,7 +191,7 @@ After enabling, confirm the following exist:
 | Create a Organigram node | `/node/add/organigram-node` |
 | Content list | `/admin/content` (filter by Organigram node) |
 
-**5. (Optional) Configure file system for private files**
+**4. (Optional) Configure file system for private files**
 
 CV and Declaration of Interest documents are stored in the `private` file scheme. If your Drupal installation does not already have a private files directory configured, add this to `settings.php`:
 
@@ -215,7 +207,7 @@ drush cr
 
 ---
 
-## 7. The Organigram Node Type Config Entity
+## 5. The Organigram Node Type Config Entity
 
 ### What it is
 
@@ -361,16 +353,6 @@ Each node is one box in the organigram. A complete field reference:
 | CV Document | `field_cv_document` | File (PDF, private) | Opens in new tab |
 | Declaration of Interest | `field_declaration_interest` | File (PDF, private) | Opens in new tab |
 
-### F. Description & Scope of Work
-
-| Label | Machine name | Type | Cardinality |
-|---|---|---|---|
-| Description & Scope of Work | `field_scope_work` | Paragraphs → `scope_work_section` | Unlimited |
-
-Each `scope_work_section` paragraph contains:
-- `field_section_title` — bold heading for the list
-- `field_bullet_points` — plain text items, one per entry (unlimited)
-
 ### G. Metadata
 
 | Label | Machine name | Type |
@@ -389,7 +371,7 @@ Each `scope_work_section` paragraph contains:
 
 3. **Use Display Order** (`field_display_weight`) to control the left-to-right order of siblings. Nodes with lower numbers appear first.
 
-4. **Fill positions.** Set *Is Vacant* to unchecked, enter the responsible person's name, upload a CV and Declaration of Interest PDF if available, and add Scope of Work paragraphs.
+4. **Fill positions.** Set *Is Vacant* to unchecked, enter the responsible person's name, upload a CV and Declaration of Interest PDF if available, and add Scope of Work.
 
 5. **Mark vacancies.** For unfilled positions, check *Is Vacant*. The node renders with a dashed border, shows "Vacant" in the person slot, and hides the CV and DoI links.
 

@@ -12,3 +12,11 @@ organigram:
     - core/drupalSettings
     - core/drupal
     - core/jquery
+
+node_type_form:
+  version: 1.0.0
+  js:
+    js/organigram-node-type-form.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

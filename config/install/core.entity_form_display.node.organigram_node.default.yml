@@ -18,14 +18,12 @@ dependencies:
     - field.field.node.organigram_node.field_responsible_photo
     - field.field.node.organigram_node.field_scope_of_work
     - field.field.node.organigram_node.field_scope_of_works_title
-    - field.field.node.organigram_node.field_scope_work
     - field.field.node.organigram_node.field_start_date
     - node.type.organigram_node
   module:
     - datetime
     - file
     - image
-    - paragraphs
     - path
     - text
 id: node.organigram_node.default
@@ -158,24 +156,6 @@ content:
     settings:
       size: 60
       placeholder: 'Scope of work'
-    third_party_settings: {  }
-  field_scope_work:
-    type: paragraphs
-    weight: 21
-    region: content
-    settings:
-      title: 'Scope Section'
-      title_plural: 'Scope Sections'
-      edit_mode: open
-      closed_mode: summary
-      autocollapse: none
-      closed_mode_threshold: 0
-      add_mode: dropdown
-      form_display_mode: default
-      default_paragraph_type: ''
-      features:
-        collapse_edit_all: collapse_edit_all
-        duplicate: duplicate
     third_party_settings: {  }
   field_start_date:
     type: datetime_default

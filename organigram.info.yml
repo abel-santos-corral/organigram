@@ -10,4 +10,3 @@ dependencies:
   - drupal:link
   - drupal:datetime
   - drupal:text
-  - paragraphs:paragraphs

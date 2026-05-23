@@ -2,8 +2,10 @@
 
 namespace Drupal\organigram\Form;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\organigram\Entity\OrganigramNodeType;
 
 /**
@@ -117,14 +119,16 @@ class OrganigramNodeTypeForm extends EntityForm {
     ];
 
     $form['preview']['canvas'] = [
-      '#markup' => $this->buildPreviewMarkup($gt),
+      '#markup' => Markup::create($this->buildPreviewMarkup($gt)),
       '#prefix' => '<div id="organigram-node-type-preview">',
       '#suffix' => '</div>',
     ];
 
     $form['preview']['note'] = [
-      '#markup' => '<p><small>' . $this->t('Save the form to refresh this preview.') . '</small></p>',
+      '#markup' => '<p><small>' . $this->t('The preview updates as the form values change.') . '</small></p>',
     ];
+
+    $form['#attached']['library'][] = 'organigram/node_type_form';
 
     return $form;
   }
@@ -137,16 +141,16 @@ class OrganigramNodeTypeForm extends EntityForm {
       return '';
     }
 
-    $bg       = htmlspecialchars($gt->getBoxBackground());
-    $fc       = htmlspecialchars($gt->getBoxFontColor());
+    $bg       = Html::escape($gt->getBoxBackground());
+    $fc       = Html::escape($gt->getBoxFontColor());
     $fs       = (int) $gt->getBoxFontSize();
-    $lc       = htmlspecialchars($gt->getLineColor());
-    $lw       = htmlspecialchars($gt->getLineSize());
-    $da       = htmlspecialchars($gt->getLineDashArray());
-    $label    = htmlspecialchars($gt->label() ?: $this->t('Example node'));
+    $lc       = Html::escape($gt->getLineColor());
+    $lw       = Html::escape($gt->getLineSize());
+    $da       = Html::escape($gt->getLineDashArray());
+    $label    = Html::escape($gt->label() ?: $this->t('Example node'));
 
     return <<<SVG
-<svg width="300" height="160" viewBox="0 0 300 160"
+<svg class="organigram-node-type-preview" width="300" height="160" viewBox="0 0 300 160"
      xmlns="http://www.w3.org/2000/svg"
      style="border:1px solid #eee;border-radius:8px;background:#f9f9f7;display:block;margin-top:8px;">
 
@@ -157,16 +161,16 @@ class OrganigramNodeTypeForm extends EntityForm {
         font-family="system-ui,sans-serif" fill="#aaa">Parent node</text>
 
   <!-- Connector line -->
-  <line x1="150" y1="54" x2="150" y2="96"
+  <line class="organigram-node-type-preview__line" x1="150" y1="54" x2="150" y2="96"
         stroke="{$lc}" stroke-width="{$lw}" stroke-dasharray="{$da}"/>
 
   <!-- This Organigram Node Type's node -->
-  <rect x="90" y="96" width="120" height="44" rx="6"
+  <rect class="organigram-node-type-preview__box" x="90" y="96" width="120" height="44" rx="6"
         fill="{$bg}" stroke="{$lc}" stroke-width="{$lw}"/>
-  <text x="150" y="114" text-anchor="middle" dominant-baseline="middle"
+  <text class="organigram-node-type-preview__label" x="150" y="114" text-anchor="middle" dominant-baseline="middle"
         font-size="{$fs}" font-family="system-ui,sans-serif" fill="{$fc}"
         font-weight="600">{$label}</text>
-  <text x="150" y="130" text-anchor="middle" dominant-baseline="middle"
+  <text class="organigram-node-type-preview__person" x="150" y="130" text-anchor="middle" dominant-baseline="middle"
         font-size="9" font-family="system-ui,sans-serif" fill="{$fc}"
         opacity="0.65">Jane Doe</text>
 </svg>
