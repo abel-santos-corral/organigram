@@ -2,15 +2,15 @@ langcode: en
 status: true
 dependencies:
   module:
-    - link
     - node
-id: node.field_external_url
-field_name: field_external_url
+id: node.field_is_hidden
+field_name: field_is_hidden
 entity_type: node
-type: link
+type: boolean
 settings:
-  link_type: 17
-module: link
+  on_label: 'Hidden'
+  off_label: 'Shown'
+module: core
 locked: false
 cardinality: 1
 translatable: false

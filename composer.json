@@ -1,0 +1,36 @@
+{
+  "name": "drupal/organigram",
+  "type": "drupal-custom-module",
+  "description": "Provides a backend module to create json with organigram and allows plugin JS-based solutions to render the organigram on the UI.",
+  "homepage": "http://drupal.org/project/organigram",
+  "license": "GPL-2.0-or-later",
+  "require": {
+      "php": "^8.2",
+      "drupal/core": "^11 || ^12"
+  },
+  "authors": [
+    {
+      "name": "Thomas Libert",
+      "homepage": "https://www.drupal.org/u/plektr0"
+    },
+    {
+      "name": "Piotr Smykaj",
+      "homepage": "https://www.drupal.org/u/piotrsmykaj"
+    },
+    {
+      "name": "David Kielemoes",
+      "homepage": "https://www.drupal.org/u/kieleda"
+    },
+    {
+      "name": "Julien Tekrane",
+      "homepage": "https://www.drupal.org/u/julien-tekrane"
+    },
+    {
+      "name": "Abel Santos",
+      "homepage": "https://www.drupal.org/u/abelcain"
+    }
+  ],
+  "require": {
+    "drupal/tmgmt": "*"
+  }
+}
