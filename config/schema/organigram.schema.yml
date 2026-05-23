@@ -1,0 +1,33 @@
+# Schema for the Organigram module's config entities.
+
+organigram.graph_type.*:
+  type: config_entity
+  label: 'Graph Type'
+  mapping:
+    id:
+      type: string
+      label: 'Machine name'
+    label:
+      type: label
+      label: 'Name'
+    uuid:
+      type: string
+      label: 'UUID'
+    box_font_size:
+      type: integer
+      label: 'Box font size (px)'
+    box_font_color:
+      type: string
+      label: 'Box font colour (hex)'
+    box_background:
+      type: string
+      label: 'Box background colour (hex)'
+    line_size:
+      type: string
+      label: 'Line width'
+    line_color:
+      type: string
+      label: 'Line colour (hex)'
+    line_type:
+      type: string
+      label: 'Line type'

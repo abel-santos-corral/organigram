@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.scope_work_section.field_section_title
+    - field.field.paragraph.scope_work_section.field_bullet_points
+    - paragraphs.paragraphs_type.scope_work_section
+id: paragraph.scope_work_section.default
+targetEntityType: paragraph
+bundle: scope_work_section
+mode: default
+content:
+  field_section_title:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: 'e.g. Strategic Responsibilities'
+    third_party_settings: {}
+  field_bullet_points:
+    type: string_textfield
+    weight: 1
+    settings:
+      size: 60
+      placeholder: 'Add one bullet point per item'
+    third_party_settings: {}
+hidden: {}

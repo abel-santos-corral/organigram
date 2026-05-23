@@ -1,0 +1,5 @@
+entity.graph_type.add_form:
+  route_name: entity.graph_type.add_form
+  title: 'Add Graph Type'
+  appears_on:
+    - entity.graph_type.collection

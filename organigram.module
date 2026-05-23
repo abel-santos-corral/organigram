@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Organigram module — Graph Node CT, Paragraph type, and D3 renderer.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function organigram_theme($existing, $type, $theme, $path): array {
+  return [
+    'organigram_display' => [
+      'variables' => [
+        'root_node_id' => NULL,
+        'settings'     => [],
+      ],
+      'template' => 'organigram-display',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_node_access_records_alter().
+ *
+ * Nothing custom needed — the module relies on core node access.
+ */
+
+/**
+ * Implements hook_preprocess_HOOK() for organigram_display.
+ */
+function template_preprocess_organigram_display(array &$variables): void {
+  $variables['#attached']['library'][] = 'organigram/organigram';
+}

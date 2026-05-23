@@ -1,0 +1,200 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.graph_node.field_graph_node_type
+    - field.field.node.graph_node.field_department_color
+    - field.field.node.graph_node.field_node_color
+    - field.field.node.graph_node.field_active
+    - field.field.node.graph_node.field_parent_node
+    - field.field.node.graph_node.field_related_nodes
+    - field.field.node.graph_node.field_relation_type
+    - field.field.node.graph_node.field_icon
+    - field.field.node.graph_node.field_display_weight
+    - field.field.node.graph_node.field_collapsed_default
+    - field.field.node.graph_node.field_position_title
+    - field.field.node.graph_node.field_is_vacant
+    - field.field.node.graph_node.field_responsible_name
+    - field.field.node.graph_node.field_responsible_photo
+    - field.field.node.graph_node.field_cv_document
+    - field.field.node.graph_node.field_declaration_interest
+    - field.field.node.graph_node.field_scope_work
+    - field.field.node.graph_node.field_start_date
+    - field.field.node.graph_node.field_end_date
+    - field.field.node.graph_node.field_external_url
+    - field.field.node.graph_node.field_internal_notes
+    - node.type.graph_node
+  module:
+    - options
+    - paragraphs
+    - text
+    - datetime
+    - link
+    - file
+    - image
+id: node.graph_node.default
+targetEntityType: node
+bundle: graph_node
+mode: default
+content:
+  title:
+    type: string_textfield
+    weight: -10
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {}
+  field_graph_node_type:
+    type: options_select
+    weight: -9
+    settings: {}
+    third_party_settings: {}
+  field_department_color:
+    type: string_textfield
+    weight: -8
+    settings:
+      size: 10
+      placeholder: '#RRGGBB'
+    third_party_settings: {}
+  field_node_color:
+    type: string_textfield
+    weight: -7
+    settings:
+      size: 10
+      placeholder: '#RRGGBB'
+    third_party_settings: {}
+  field_active:
+    type: boolean_checkbox
+    weight: -6
+    settings:
+      display_label: true
+    third_party_settings: {}
+  field_display_weight:
+    type: number
+    weight: -5
+    settings:
+      placeholder: '0'
+    third_party_settings: {}
+  field_collapsed_default:
+    type: boolean_checkbox
+    weight: -4
+    settings:
+      display_label: true
+    third_party_settings: {}
+  field_parent_node:
+    type: entity_reference_autocomplete
+    weight: 1
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {}
+  field_related_nodes:
+    type: entity_reference_autocomplete
+    weight: 2
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {}
+  field_relation_type:
+    type: options_select
+    weight: 3
+    settings: {}
+    third_party_settings: {}
+  field_icon:
+    type: image_image
+    weight: 4
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {}
+  field_position_title:
+    type: string_textfield
+    weight: 10
+    settings:
+      size: 60
+      placeholder: 'e.g. Head of Unit'
+    third_party_settings: {}
+  field_is_vacant:
+    type: boolean_checkbox
+    weight: 11
+    settings:
+      display_label: true
+    third_party_settings: {}
+  field_responsible_name:
+    type: string_textfield
+    weight: 12
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {}
+  field_responsible_photo:
+    type: image_image
+    weight: 13
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {}
+  field_cv_document:
+    type: file_generic
+    weight: 14
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {}
+  field_declaration_interest:
+    type: file_generic
+    weight: 15
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {}
+  field_scope_work:
+    type: paragraphs
+    weight: 20
+    settings:
+      title: 'Scope Section'
+      title_plural: 'Scope Sections'
+      edit_mode: open
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: scope_work_section
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+    third_party_settings: {}
+  field_start_date:
+    type: datetime_default
+    weight: 25
+    settings:
+      increment: 1
+      date_order: YMD
+      time_type: none
+    third_party_settings: {}
+  field_end_date:
+    type: datetime_default
+    weight: 26
+    settings:
+      increment: 1
+      date_order: YMD
+      time_type: none
+    third_party_settings: {}
+  field_external_url:
+    type: link_default
+    weight: 27
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {}
+  field_internal_notes:
+    type: text_textarea
+    weight: 28
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {}
+hidden: {}

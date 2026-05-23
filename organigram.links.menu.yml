@@ -1,0 +1,6 @@
+organigram.graph_type.collection:
+  title: 'Graph Types'
+  route_name: entity.graph_type.collection
+  parent: system.admin_structure
+  description: 'Manage graph node type definitions: visual styling for organigram nodes and connector lines.'
+  weight: 10

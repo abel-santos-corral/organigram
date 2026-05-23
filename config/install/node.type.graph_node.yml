@@ -1,0 +1,12 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+name: 'Graph Node'
+type: graph_node
+description: 'Organigram node representing departments, positions, roles, units, squads, etc.'
+help: 'Set Parent Node to define the hierarchy. Use Description & Scope of Work paragraphs for modal content.'
+new_revision: false
+preview_mode: 1
+display_submitted: false

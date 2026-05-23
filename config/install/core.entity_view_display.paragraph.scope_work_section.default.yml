@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.scope_work_section.field_section_title
+    - field.field.paragraph.scope_work_section.field_bullet_points
+    - paragraphs.paragraphs_type.scope_work_section
+id: paragraph.scope_work_section.default
+targetEntityType: paragraph
+bundle: scope_work_section
+mode: default
+content:
+  field_section_title:
+    label: hidden
+    type: string
+    weight: 0
+    settings:
+      link_to_entity: false
+    third_party_settings: {}
+  field_bullet_points:
+    label: hidden
+    type: string
+    weight: 1
+    settings:
+      link_to_entity: false
+    third_party_settings: {}
+hidden: {}

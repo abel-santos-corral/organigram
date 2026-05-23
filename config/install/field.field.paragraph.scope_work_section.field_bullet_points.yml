@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_bullet_points
+    - paragraphs.paragraphs_type.scope_work_section
+id: paragraph.scope_work_section.field_bullet_points
+field_name: field_bullet_points
+entity_type: paragraph
+bundle: scope_work_section
+label: 'Bullet Points'
+description: 'Add one entry per list item. Plain text, no formatting.'
+required: true
+translatable: false
+default_value: []
+default_value_callback: ''
+settings: {}
+field_type: string

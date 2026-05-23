@@ -1,0 +1,66 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.graph_node
+  module:
+    - node
+id: node.graph_node.default
+targetEntityType: node
+bundle: graph_node
+mode: default
+content:
+  title:
+    label: hidden
+    type: string
+    weight: -10
+    settings:
+      link_to_entity: true
+    third_party_settings: {}
+  field_graph_node_type:
+    label: above
+    type: list_default
+    weight: 1
+    settings: {}
+    third_party_settings: {}
+  field_is_vacant:
+    label: above
+    type: boolean
+    weight: 2
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {}
+  field_responsible_name:
+    label: above
+    type: string
+    weight: 3
+    settings:
+      link_to_entity: false
+    third_party_settings: {}
+  field_scope_work:
+    label: hidden
+    type: entity_reference_revisions_entity_view
+    weight: 20
+    settings:
+      view_mode: default
+    third_party_settings: {}
+hidden:
+  field_department_color: true
+  field_node_color: true
+  field_parent_node: true
+  field_related_nodes: true
+  field_relation_type: true
+  field_icon: true
+  field_display_weight: true
+  field_collapsed_default: true
+  field_active: true
+  field_position_title: true
+  field_responsible_photo: true
+  field_cv_document: true
+  field_declaration_interest: true
+  field_start_date: true
+  field_end_date: true
+  field_external_url: true
+  field_internal_notes: true

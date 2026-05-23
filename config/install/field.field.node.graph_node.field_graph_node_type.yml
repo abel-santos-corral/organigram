@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_graph_node_type
+    - node.type.graph_node
+id: node.graph_node.field_graph_node_type
+field_name: field_graph_node_type
+entity_type: node
+bundle: graph_node
+label: 'Graph Node Type'
+description: 'The visual type of this node. Controls box style, font, colours, and connector line appearance.'
+required: true
+translatable: false
+default_value: []
+default_value_callback: ''
+settings:
+  handler: default:graph_type
+  handler_settings: {}
+field_type: entity_reference

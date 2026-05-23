@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_parent_node
+    - node.type.graph_node
+id: node.graph_node.field_parent_node
+field_name: field_parent_node
+entity_type: node
+bundle: graph_node
+label: 'Parent Node'
+description: 'The direct parent in the hierarchy (tree structure). Leave empty for the root node.'
+required: false
+translatable: false
+default_value: []
+default_value_callback: ''
+settings:
+  handler: default:node
+  handler_settings:
+    target_bundles:
+      graph_node: graph_node
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

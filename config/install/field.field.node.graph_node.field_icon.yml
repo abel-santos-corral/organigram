@@ -1,0 +1,35 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_icon
+    - node.type.graph_node
+id: node.graph_node.field_icon
+field_name: field_icon
+entity_type: node
+bundle: graph_node
+label: Icon
+description: 'Optional icon displayed inside the node box.'
+required: false
+translatable: false
+default_value: []
+default_value_callback: ''
+settings:
+  file_extensions: png svg jpg jpeg webp
+  file_directory: organigram/icons
+  max_filesize: '512 KB'
+  alt_field: false
+  alt_field_required: false
+  title_field: false
+  title_field_required: false
+  default_image:
+    uuid: null
+    alt: ''
+    title: ''
+    width: null
+    height: null
+  max_resolution: ''
+  min_resolution: ''
+  handler: default:file
+  handler_settings: {}
+field_type: image

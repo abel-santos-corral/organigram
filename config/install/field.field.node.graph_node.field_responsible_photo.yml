@@ -1,0 +1,35 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_responsible_photo
+    - node.type.graph_node
+id: node.graph_node.field_responsible_photo
+field_name: field_responsible_photo
+entity_type: node
+bundle: graph_node
+label: 'Responsible Person Photo'
+description: ''
+required: false
+translatable: false
+default_value: []
+default_value_callback: ''
+settings:
+  file_extensions: png jpg jpeg webp
+  file_directory: organigram/photos
+  max_filesize: '2 MB'
+  alt_field: true
+  alt_field_required: false
+  title_field: false
+  title_field_required: false
+  default_image:
+    uuid: null
+    alt: ''
+    title: ''
+    width: null
+    height: null
+  max_resolution: 400x400
+  min_resolution: ''
+  handler: default:file
+  handler_settings: {}
+field_type: image

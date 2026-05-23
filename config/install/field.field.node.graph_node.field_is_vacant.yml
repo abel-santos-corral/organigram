@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_is_vacant
+    - node.type.graph_node
+id: node.graph_node.field_is_vacant
+field_name: field_is_vacant
+entity_type: node
+bundle: graph_node
+label: 'Is Vacant'
+description: ''
+required: false
+translatable: false
+default_value: []
+default_value_callback: ''
+settings: {}
+field_type: boolean

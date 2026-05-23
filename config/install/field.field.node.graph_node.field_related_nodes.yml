@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_related_nodes
+    - node.type.graph_node
+id: node.graph_node.field_related_nodes
+field_name: field_related_nodes
+entity_type: node
+bundle: graph_node
+label: 'Related Nodes'
+description: 'Non-hierarchical cross-references: matrix, dotted lines, chapter/squad membership, advisory.'
+required: false
+translatable: false
+default_value: []
+default_value_callback: ''
+settings:
+  handler: default:node
+  handler_settings:
+    target_bundles:
+      graph_node: graph_node
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

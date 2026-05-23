@@ -1,0 +1,4 @@
+administer organigram:
+  title: 'Administer organigram settings'
+  description: 'Configure global organigram display settings.'
+  restrict access: true
