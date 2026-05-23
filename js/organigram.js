@@ -68,6 +68,7 @@
 
     // ── D3 hierarchy ──────────────────────────────────────────────────────
     const root = d3.hierarchy(treeData);
+    let zoomTransform = d3.zoomIdentity;
     // Initialise collapsed nodes.
     root.each(d => {
       if (d.data.collapsed && d.children) {
@@ -99,6 +100,16 @@
         .style('display', 'block')
         .attr('aria-label', 'Organisational chart');
 
+      const zoomLayer = svg.append('g').attr('class', 'organigram__zoom-layer');
+      const zoom = d3.zoom()
+        .scaleExtent([0.4, 3])
+        .on('zoom', event => {
+          zoomTransform = event.transform;
+          zoomLayer.attr('transform', zoomTransform);
+        });
+
+      svg.call(zoom).on('dblclick.zoom', null);
+
       // Inline styles using CSS custom properties so dark mode works.
       svg.append('style').text(`
         .org-link   { fill:none; stroke:var(--organigram-link-color,#ccc); stroke-width:var(--organigram-link-width,.5); stroke-dasharray:var(--organigram-link-dasharray,none); }
@@ -114,7 +125,9 @@
         .org-node:hover .org-rect { stroke:var(--organigram-hover-border,#555); }
       `);
 
-      const g = svg.append('g').attr('transform', `translate(${ox},${oy})`);
+      const g = zoomLayer.append('g').attr('transform', `translate(${ox},${oy})`);
+      svg.call(zoom.transform, zoomTransform);
+      buildZoomControls(chartEl, svg, zoom);
 
       // ── Department cluster backgrounds ─────────────────────────────────
       drawClusters(g, root);
@@ -239,6 +252,35 @@
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(update, 200);
+    });
+  }
+
+  // ── Zoom controls ──────────────────────────────────────────────────────────
+  function buildZoomControls(chartEl, svg, zoom) {
+    const controls = document.createElement('div');
+    controls.className = 'organigram__zoom-controls';
+    controls.innerHTML = [
+      '<button type="button" class="organigram__zoom-button" data-zoom="in" aria-label="Zoom in">+</button>',
+      '<button type="button" class="organigram__zoom-button" data-zoom="out" aria-label="Zoom out">-</button>',
+      '<button type="button" class="organigram__zoom-button" data-zoom="reset" aria-label="Reset zoom">Reset</button>',
+    ].join('');
+    chartEl.appendChild(controls);
+
+    controls.addEventListener('click', event => {
+      const button = event.target.closest('button[data-zoom]');
+      if (!button) {
+        return;
+      }
+
+      if (button.dataset.zoom === 'in') {
+        svg.transition().duration(180).call(zoom.scaleBy, 1.25);
+      }
+      else if (button.dataset.zoom === 'out') {
+        svg.transition().duration(180).call(zoom.scaleBy, 0.8);
+      }
+      else {
+        svg.transition().duration(180).call(zoom.transform, d3.zoomIdentity);
+      }
     });
   }
 

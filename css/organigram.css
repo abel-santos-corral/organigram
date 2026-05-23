@@ -1,7 +1,10 @@
 /* organigram.css */
 #organigram-container { width:100%; position:relative; }
 .organigram__wrapper { display:flex; gap:16px; align-items:flex-start; width:100%; }
-.organigram__chart { flex:1; min-width:0; overflow-x:auto; border:1px solid #e0e0dc; border-radius:12px; background:#fff; padding:8px 0; }
+.organigram__chart { flex:1; min-width:0; overflow:hidden; border:1px solid #e0e0dc; border-radius:12px; background:#fff; padding:8px 0; position:relative; touch-action:none; }
+.organigram__zoom-controls { position:absolute; top:12px; left:12px; z-index:2; display:flex; gap:4px; }
+.organigram__zoom-button { min-width:28px; height:28px; padding:0 8px; border:1px solid #d8d8d2; border-radius:4px; background:#fff; color:#333; font-size:12px; line-height:26px; cursor:pointer; }
+.organigram__zoom-button:hover { background:#f6f6f3; border-color:#bdbdb7; }
 .organigram__modal { width:300px; flex-shrink:0; background:#fff; border:1px solid #e0e0dc; border-radius:12px; padding:20px; display:none; position:relative; align-self:flex-start; }
 .organigram__modal.is-open { display:block; }
 .organigram__modal-close { position:absolute; top:12px; right:14px; background:none; border:none; cursor:pointer; font-size:14px; color:#999; line-height:1; padding:2px 4px; }
