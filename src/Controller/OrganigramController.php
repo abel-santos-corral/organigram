@@ -118,10 +118,6 @@ class OrganigramController extends ControllerBase {
 
       'position_title'      => $this->fieldString($node, 'field_position_title'),
       'vacant'              => $is_vacant,
-      'responsible_name'    => NULL,
-      'responsible_photo'   => NULL,
-      'cv'                  => NULL,
-      'declaration_interest'=> NULL,
 
       'field_scope_of_works_title' => $this->fieldString($node, 'field_scope_of_works_title'),
       'field_scope_of_work' => $this->fieldProcessedText($node, 'field_scope_of_work'),

@@ -5,8 +5,8 @@
  * Organigram module — Organigram node CT, Paragraph type, and D3 renderer.
  */
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_theme().
@@ -34,4 +34,31 @@ function organigram_theme($existing, $type, $theme, $path): array {
  */
 function template_preprocess_organigram_display(array &$variables): void {
   $variables['#attached']['library'][] = 'organigram/organigram';
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function organigram_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  $form_object = $form_state->getFormObject();
+  if (!$form_object || !method_exists($form_object, 'getEntity')) {
+    return;
+  }
+
+  $entity = $form_object->getEntity();
+  if (!$entity instanceof NodeInterface || $entity->bundle() !== 'organigram_node') {
+    return;
+  }
+
+  $vacant_selector = ':input[name="field_is_vacant[value]"]';
+  foreach ([
+    'field_responsible_name',
+    'field_responsible_photo',
+    'field_cv_document',
+    'field_declaration_interest',
+  ] as $field_name) {
+    if (isset($form[$field_name])) {
+      $form[$field_name]['#states']['invisible'][$vacant_selector] = ['checked' => TRUE];
+    }
+  }
 }
