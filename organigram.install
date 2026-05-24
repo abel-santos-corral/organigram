@@ -5,8 +5,6 @@
  * Install, update and uninstall functions for the Organigram module.
  */
 
-use Drupal\Core\Field\BaseFieldDefinition;
-
 /**
  * Implements hook_install().
  */
@@ -18,18 +16,16 @@ function organigram_install(): void {
 }
 
 /**
- * Migrate field_organigram_node_type from list_string to entity_reference (organigram_node_type).
+ * Migrate field_organigram_node_type to entity_reference.
  *
- * Run this on existing sites that installed organigram before the organigram_node_type
- * config entity was introduced.  Fresh installs do not need this update.
+ * Run this on existing sites that installed organigram before the
+ * organigram_node_type config entity was introduced. Fresh installs do not need
+ * this update.
  *
- * The old machine values (department, unit, position …) are identical to the
- * new organigram_node_type IDs, so no data transformation is needed — only the field
- * storage definition changes.
+ * The old machine values are identical to the new organigram_node_type IDs, so
+ * no data transformation is needed. Only the field storage definition changes.
  */
 function organigram_update_10001(): void {
-  $entity_type_manager = \Drupal::entityTypeManager();
-  $field_storage_manager = \Drupal::service('field_storage_definition.listener');
   $config_factory = \Drupal::configFactory();
 
   // Step 1: collect existing values before we touch the field.
@@ -60,7 +56,7 @@ function organigram_update_10001(): void {
   $config_installer = \Drupal::service('config.installer');
   $config_installer->installDefaultConfig('module', 'organigram');
 
-  // Step 4: re-insert data — old string values map 1:1 to new organigram_node_type IDs.
+  // Step 4: re-insert data. Old string values map 1:1 to new IDs.
   // The new column is field_organigram_node_type_target_id (entity_reference).
   if (!empty($existing) && $database->schema()->tableExists('node__field_organigram_node_type')) {
     foreach ($existing as $row) {
