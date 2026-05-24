@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\organigram\Entity\OrganigramNodeType;
+use Drupal\organigram\Entity\OrganigramNodeTypeInterface;
 
 /**
  * Add / Edit form for the Organigram Node Type config entity.
@@ -47,7 +48,7 @@ class OrganigramNodeTypeForm extends EntityForm {
       '#disabled'      => !$gt->isNew(),
     ];
 
-    // ── Box ───────────────────────────────────────────────────────────────────
+    // ── Box ─────────────────────────────────────────────────────────────────
     $form['box'] = [
       '#type'        => 'details',
       '#title'       => $this->t('Box'),
@@ -137,17 +138,17 @@ class OrganigramNodeTypeForm extends EntityForm {
    * Builds a static SVG preview of a node and its connector line.
    */
   protected function buildPreviewMarkup(mixed $gt): string {
-    if (!$gt instanceof \Drupal\organigram\Entity\OrganigramNodeTypeInterface) {
+    if (!$gt instanceof OrganigramNodeTypeInterface) {
       return '';
     }
 
-    $bg       = Html::escape($gt->getBoxBackground());
-    $fc       = Html::escape($gt->getBoxFontColor());
-    $fs       = (int) $gt->getBoxFontSize();
-    $lc       = Html::escape($gt->getLineColor());
-    $lw       = Html::escape($gt->getLineSize());
-    $da       = Html::escape($gt->getLineDashArray());
-    $label    = Html::escape($gt->label() ?: $this->t('Example node'));
+    $bg = Html::escape($gt->getBoxBackground());
+    $fc = Html::escape($gt->getBoxFontColor());
+    $fs = (int) $gt->getBoxFontSize();
+    $lc = Html::escape($gt->getLineColor());
+    $lw = Html::escape($gt->getLineSize());
+    $da = Html::escape($gt->getLineDashArray());
+    $label = Html::escape($gt->label() ?: $this->t('Example node'));
 
     return <<<SVG
 <svg class="organigram-node-type-preview" width="300" height="160" viewBox="0 0 300 160"
@@ -184,12 +185,12 @@ SVG;
     // Map fieldset sub-keys to entity properties before saving.
     $values = $form_state->getValues();
 
-    $this->entity->set('box_font_size',  (int) ($values['box_font_size']  ?? $values['box']['box_font_size']  ?? 11));
-    $this->entity->set('box_font_color', $values['box_font_color']  ?? $values['box']['box_font_color']  ?? '#1a1a18');
-    $this->entity->set('box_background', $values['box_background']  ?? $values['box']['box_background']  ?? '#ffffff');
-    $this->entity->set('line_size',      $values['line_size']       ?? $values['line']['line_size']       ?? '1');
-    $this->entity->set('line_color',     $values['line_color']      ?? $values['line']['line_color']      ?? '#cccccc');
-    $this->entity->set('line_type',      $values['line_type']       ?? $values['line']['line_type']       ?? 'solid');
+    $this->entity->set('box_font_size', (int) ($values['box_font_size'] ?? $values['box']['box_font_size'] ?? 11));
+    $this->entity->set('box_font_color', $values['box_font_color'] ?? $values['box']['box_font_color'] ?? '#1a1a18');
+    $this->entity->set('box_background', $values['box_background'] ?? $values['box']['box_background'] ?? '#ffffff');
+    $this->entity->set('line_size', $values['line_size'] ?? $values['line']['line_size'] ?? '1');
+    $this->entity->set('line_color', $values['line_color'] ?? $values['line']['line_color'] ?? '#cccccc');
+    $this->entity->set('line_type', $values['line_type'] ?? $values['line']['line_type'] ?? 'solid');
 
     $status = parent::save($form, $form_state);
 
