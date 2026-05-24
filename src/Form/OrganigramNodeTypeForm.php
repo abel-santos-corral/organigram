@@ -2,10 +2,8 @@
 
 namespace Drupal\organigram\Form;
 
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\organigram\Entity\OrganigramNodeType;
 use Drupal\organigram\Entity\OrganigramNodeTypeInterface;
 
@@ -24,110 +22,13 @@ class OrganigramNodeTypeForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state): array {
     $form = parent::form($form, $form_state);
 
-    /** @var \Drupal\organigram\Entity\OrganigramNodeTypeInterface $gt */
-    $gt = $this->entity;
+    /** @var \Drupal\organigram\Entity\OrganigramNodeTypeInterface $node_type */
+    $node_type = $this->entity;
 
-    // ── Identity ─────────────────────────────────────────────────────────────
-    $form['label'] = [
-      '#type'          => 'textfield',
-      '#title'         => $this->t('Name'),
-      '#description'   => $this->t('Human-readable name shown in the node type selector. Example: <em>Department</em>, <em>Squad</em>.'),
-      '#default_value' => $gt->label(),
-      '#required'      => TRUE,
-      '#maxlength'     => 64,
-    ];
-
-    $form['id'] = [
-      '#type'          => 'machine_name',
-      '#default_value' => $gt->id(),
-      '#maxlength'     => 32,
-      '#machine_name'  => [
-        'exists'    => [OrganigramNodeType::class, 'load'],
-        'source'    => ['label'],
-      ],
-      '#disabled'      => !$gt->isNew(),
-    ];
-
-    // ── Box ─────────────────────────────────────────────────────────────────
-    $form['box'] = [
-      '#type'        => 'details',
-      '#title'       => $this->t('Box'),
-      '#description' => $this->t('Visual appearance of the node rectangle in the organigram.'),
-      '#open'        => TRUE,
-    ];
-
-    $form['box']['box_font_size'] = [
-      '#type'          => 'number',
-      '#title'         => $this->t('Font size'),
-      '#field_suffix'  => 'px',
-      '#default_value' => $gt->getBoxFontSize(),
-      '#min'           => 8,
-      '#max'           => 32,
-      '#step'          => 1,
-      '#required'      => TRUE,
-    ];
-
-    $form['box']['box_font_color'] = [
-      '#type'          => 'color',
-      '#title'         => $this->t('Font colour'),
-      '#default_value' => $gt->getBoxFontColor(),
-      '#required'      => TRUE,
-    ];
-
-    $form['box']['box_background'] = [
-      '#type'          => 'color',
-      '#title'         => $this->t('Background colour'),
-      '#default_value' => $gt->getBoxBackground(),
-      '#required'      => TRUE,
-    ];
-
-    // ── Line ─────────────────────────────────────────────────────────────────
-    $form['line'] = [
-      '#type'        => 'details',
-      '#title'       => $this->t('Connector line'),
-      '#description' => $this->t('Appearance of the lines connecting nodes in the hierarchy.'),
-      '#open'        => TRUE,
-    ];
-
-    $form['line']['line_size'] = [
-      '#type'          => 'select',
-      '#title'         => $this->t('Width'),
-      '#options'       => OrganigramNodeType::lineSizeOptions(),
-      '#default_value' => $gt->getLineSize(),
-      '#required'      => TRUE,
-    ];
-
-    $form['line']['line_color'] = [
-      '#type'          => 'color',
-      '#title'         => $this->t('Colour'),
-      '#default_value' => $gt->getLineColor(),
-      '#required'      => TRUE,
-    ];
-
-    $form['line']['line_type'] = [
-      '#type'          => 'select',
-      '#title'         => $this->t('Type'),
-      '#options'       => OrganigramNodeType::lineTypeOptions(),
-      '#default_value' => $gt->getLineType(),
-      '#required'      => TRUE,
-    ];
-
-    // ── Live preview ─────────────────────────────────────────────────────────
-    $form['preview'] = [
-      '#type'   => 'details',
-      '#title'  => $this->t('Live preview'),
-      '#open'   => TRUE,
-    ];
-
-    $form['preview']['canvas'] = [
-      '#markup' => Markup::create($this->buildPreviewMarkup($gt)),
-      '#prefix' => '<div id="organigram-node-type-preview">',
-      '#suffix' => '</div>',
-    ];
-
-    $form['preview']['note'] = [
-      '#markup' => '<p><small>' . $this->t('The preview updates as the form values change.') . '</small></p>',
-    ];
+    $form += $this->buildIdentityElements($node_type);
+    $form['box'] = $this->buildBoxElement($node_type);
+    $form['line'] = $this->buildLineElement($node_type);
+    $form['preview'] = $this->buildPreviewElement($node_type);
 
     $form['#attached']['library'][] = 'organigram/node_type_form';
 
@@ -135,20 +36,138 @@ class OrganigramNodeTypeForm extends EntityForm {
   }
 
   /**
+   * Builds identity form elements.
+   */
+  protected function buildIdentityElements(
+    OrganigramNodeTypeInterface $node_type,
+  ): array {
+    return [
+      'label' => [
+        '#type' => 'textfield',
+        '#title' => $this->t('Name'),
+        '#description' => $this->t('Human-readable name shown in the node type selector. Example: <em>Department</em>, <em>Squad</em>.'),
+        '#default_value' => $node_type->label(),
+        '#required' => TRUE,
+        '#maxlength' => 64,
+      ],
+      'id' => [
+        '#type' => 'machine_name',
+        '#default_value' => $node_type->id(),
+        '#maxlength' => 32,
+        '#machine_name' => [
+          'exists' => [OrganigramNodeType::class, 'load'],
+          'source' => ['label'],
+        ],
+        '#disabled' => !$node_type->isNew(),
+      ],
+    ];
+  }
+
+  /**
+   * Builds box style form elements.
+   */
+  protected function buildBoxElement(OrganigramNodeTypeInterface $node_type): array {
+    return [
+      '#type' => 'details',
+      '#title' => $this->t('Box'),
+      '#description' => $this->t('Visual appearance of the node rectangle in the organigram.'),
+      '#open' => TRUE,
+      'box_font_size' => [
+        '#type' => 'number',
+        '#title' => $this->t('Font size'),
+        '#field_suffix' => 'px',
+        '#default_value' => $node_type->getBoxFontSize(),
+        '#min' => 8,
+        '#max' => 32,
+        '#step' => 1,
+        '#required' => TRUE,
+      ],
+      'box_font_color' => [
+        '#type' => 'color',
+        '#title' => $this->t('Font colour'),
+        '#default_value' => $node_type->getBoxFontColor(),
+        '#required' => TRUE,
+      ],
+      'box_background' => [
+        '#type' => 'color',
+        '#title' => $this->t('Background colour'),
+        '#default_value' => $node_type->getBoxBackground(),
+        '#required' => TRUE,
+      ],
+    ];
+  }
+
+  /**
+   * Builds line style form elements.
+   */
+  protected function buildLineElement(
+    OrganigramNodeTypeInterface $node_type,
+  ): array {
+    return [
+      '#type' => 'details',
+      '#title' => $this->t('Connector line'),
+      '#description' => $this->t('Appearance of the lines connecting nodes in the hierarchy.'),
+      '#open' => TRUE,
+      'line_size' => [
+        '#type' => 'select',
+        '#title' => $this->t('Width'),
+        '#options' => $this->lineSizeOptions(),
+        '#default_value' => $node_type->getLineSize(),
+        '#required' => TRUE,
+      ],
+      'line_color' => [
+        '#type' => 'color',
+        '#title' => $this->t('Colour'),
+        '#default_value' => $node_type->getLineColor(),
+        '#required' => TRUE,
+      ],
+      'line_type' => [
+        '#type' => 'select',
+        '#title' => $this->t('Type'),
+        '#options' => $this->lineTypeOptions(),
+        '#default_value' => $node_type->getLineType(),
+        '#required' => TRUE,
+      ],
+    ];
+  }
+
+  /**
+   * Builds the live preview form element.
+   */
+  protected function buildPreviewElement(
+    OrganigramNodeTypeInterface $node_type,
+  ): array {
+    return [
+      '#type' => 'details',
+      '#title' => $this->t('Live preview'),
+      '#open' => TRUE,
+      'canvas' => [
+        '#type' => 'inline_template',
+        '#template' => $this->buildPreviewMarkup($node_type),
+        '#prefix' => '<div id="organigram-node-type-preview">',
+        '#suffix' => '</div>',
+      ],
+      'note' => [
+        '#markup' => '<p><small>' . $this->t('The preview updates as the form values change.') . '</small></p>',
+      ],
+    ];
+  }
+
+  /**
    * Builds a static SVG preview of a node and its connector line.
    */
-  protected function buildPreviewMarkup(mixed $gt): string {
-    if (!$gt instanceof OrganigramNodeTypeInterface) {
+  protected function buildPreviewMarkup(mixed $node_type): string {
+    if (!$node_type instanceof OrganigramNodeTypeInterface) {
       return '';
     }
 
-    $bg = Html::escape($gt->getBoxBackground());
-    $fc = Html::escape($gt->getBoxFontColor());
-    $fs = (int) $gt->getBoxFontSize();
-    $lc = Html::escape($gt->getLineColor());
-    $lw = Html::escape($gt->getLineSize());
-    $da = Html::escape($gt->getLineDashArray());
-    $label = Html::escape($gt->label() ?: $this->t('Example node'));
+    $background = $this->escapeMarkup($node_type->getBoxBackground());
+    $font_color = $this->escapeMarkup($node_type->getBoxFontColor());
+    $font_size = (int) $node_type->getBoxFontSize();
+    $line_color = $this->escapeMarkup($node_type->getLineColor());
+    $line_width = $this->escapeMarkup($node_type->getLineSize());
+    $dash_array = $this->escapeMarkup($node_type->getLineDashArray());
+    $label = $this->escapeMarkup($node_type->label() ?: $this->t('Example node'));
 
     return <<<SVG
 <svg class="organigram-node-type-preview" width="300" height="160" viewBox="0 0 300 160"
@@ -163,19 +182,54 @@ class OrganigramNodeTypeForm extends EntityForm {
 
   <!-- Connector line -->
   <line class="organigram-node-type-preview__line" x1="150" y1="54" x2="150" y2="96"
-        stroke="{$lc}" stroke-width="{$lw}" stroke-dasharray="{$da}"/>
+        stroke="{$line_color}" stroke-width="{$line_width}" stroke-dasharray="{$dash_array}"/>
 
   <!-- This Organigram Node Type's node -->
   <rect class="organigram-node-type-preview__box" x="90" y="96" width="120" height="44" rx="6"
-        fill="{$bg}" stroke="{$lc}" stroke-width="{$lw}"/>
+        fill="{$background}" stroke="{$line_color}" stroke-width="{$line_width}"/>
   <text class="organigram-node-type-preview__label" x="150" y="114" text-anchor="middle" dominant-baseline="middle"
-        font-size="{$fs}" font-family="system-ui,sans-serif" fill="{$fc}"
+        font-size="{$font_size}" font-family="system-ui,sans-serif" fill="{$font_color}"
         font-weight="600">{$label}</text>
   <text class="organigram-node-type-preview__person" x="150" y="130" text-anchor="middle" dominant-baseline="middle"
-        font-size="9" font-family="system-ui,sans-serif" fill="{$fc}"
+        font-size="9" font-family="system-ui,sans-serif" fill="{$font_color}"
         opacity="0.65">Jane Doe</text>
 </svg>
 SVG;
+  }
+
+  /**
+   * Returns escaped text for preview SVG attributes and text nodes.
+   */
+  protected function escapeMarkup(mixed $value): string {
+    return htmlspecialchars(
+      (string) $value,
+      ENT_QUOTES | ENT_SUBSTITUTE,
+      'UTF-8'
+    );
+  }
+
+  /**
+   * Returns the allowed line size options.
+   */
+  protected function lineSizeOptions(): array {
+    return [
+      '0.5' => '0.5 px',
+      '1' => '1 px',
+      '1.5' => '1.5 px',
+      '2' => '2 px',
+    ];
+  }
+
+  /**
+   * Returns the allowed line type options.
+   */
+  protected function lineTypeOptions(): array {
+    return [
+      'solid' => $this->t('Solid'),
+      'dashed' => $this->t('Dashed'),
+      'dotted' => $this->t('Dotted'),
+      'dashdot' => $this->t('Dash-dot'),
+    ];
   }
 
   /**
