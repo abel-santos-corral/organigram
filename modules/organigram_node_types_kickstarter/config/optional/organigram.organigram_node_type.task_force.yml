@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - organigram
+    - organigram_node_types_kickstarter
+id: task_force
+label: 'Task Force'
+box_font_size: 11
+box_font_color: '#0E4A26'
+box_background: '#C9E8D4'
+line_size: '1.5'
+line_color: '#1A7A40'
+line_type: 'solid'

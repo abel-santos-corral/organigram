@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
 /**
@@ -48,6 +49,16 @@ function organigram_form_alter(array &$form, FormStateInterface $form_state, str
   $entity = $form_object->getEntity();
   if (!$entity instanceof NodeInterface || $entity->bundle() !== 'organigram_node') {
     return;
+  }
+
+  if (
+    isset($form['field_organigram_node_type']['widget']) &&
+    \Drupal::entityTypeManager()->getStorage('organigram_node_type')->loadMultiple() === []
+  ) {
+    $form['field_organigram_node_type']['widget']['#description'] = t(
+      'No Organigram Node Types defined yet. <a href=":url">Add a Organigram Node Type</a>.',
+      [':url' => Url::fromRoute('entity.organigram_node_type.add_form')->toString()]
+    );
   }
 
   $vacant_selector = ':input[name="field_is_vacant[value]"]';

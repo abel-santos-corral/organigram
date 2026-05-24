@@ -63,7 +63,7 @@ The following is within scope of this module:
 - Definition of the `organigram_node` content type with all fields described in this document
 - Definition of the `scope_work_section` Paragraph type for structured scope content
 - Definition of the `organigram_node_type` config entity and its CRUD admin interface
-- Three default Organigram Node Type presets shipped as install config (`department`, `position`, `role`)
+- Optional starter Organigram Node Type presets shipped by the Organigram node types kickstarter submodule (`department`, `direction`, `role`, `task_force`, `team`, `unit`)
 - A D3.js tree renderer attached to any `organigram_node` via `/organigram/{nid}`
 - A JSON data endpoint at `/organigram/{nid}/data` that serialises the full subtree rooted at any node, including resolved Organigram Node Type visual settings
 - Department cluster backgrounds: nodes sharing a Organigram Node Type colour are grouped visually in the SVG
@@ -112,12 +112,18 @@ organigram/
 │   │   ├── field.storage.paragraph.*
 │   │   ├── field.field.paragraph.*
 │   │   ├── core.entity_form_display.*
-│   │   ├── core.entity_view_display.*
-│   │   ├── organigram.organigram_node_type.department.yml  # ┐
-│   │   ├── organigram.organigram_node_type.position.yml    # ├ Default presets
-│   │   └── organigram.organigram_node_type.role.yml        # ┘
+│   │   └── core.entity_view_display.*
 │   └── schema/
 │       └── organigram.schema.yml   # Config schema for OrganigramNodeType entity
+├── modules/
+│   └── organigram_node_types_kickstarter/
+│       └── config/optional/
+│           ├── organigram.organigram_node_type.department.yml
+│           ├── organigram.organigram_node_type.direction.yml
+│           ├── organigram.organigram_node_type.role.yml
+│           ├── organigram.organigram_node_type.task_force.yml
+│           ├── organigram.organigram_node_type.team.yml
+│           └── organigram.organigram_node_type.unit.yml
 ├── js/organigram.js                # D3 v7 renderer (Drupal.behaviors)
 ├── css/organigram.css              # Layout, modal, node styles
 └── templates/
@@ -178,7 +184,7 @@ This single command installs all of the following in the correct dependency orde
 - The `organigram_node` content type and all 22 fields
 - The `scope_work_section` Paragraph type and its fields
 - The `organigram_node_type` config entity definition
-- The three default Organigram Node Type presets (`department`, `position`, `role`)
+- Starter Organigram Node Type presets are provided by the optional Organigram node types kickstarter submodule.
 - All form and view display configurations
 
 **3. Verify**
@@ -233,43 +239,43 @@ Organigram Node Types are **configuration**, not content. This has two important
 
 ### Default presets
 
-Three Organigram Node Types are shipped with the module as install configuration. They are created automatically on `drush en organigram` and are designed to cover the most common organigram structure immediately:
+Starter Organigram Node Types are shipped with the Organigram node types kickstarter submodule as optional configuration. They are created automatically on `drush en organigram_node_types_kickstarter` and are designed to cover the most common organigram structure immediately:
 
 #### `department`
 ```yaml
 label: Department
 box_font_size: 11
-box_font_color: '#ffffff'
-box_background: '#0055AA'
-line_size: '2'
-line_color: '#0055AA'
+box_font_color: '#3A2800'
+box_background: '#F5D04A'
+line_size: '1.5'
+line_color: '#C9A800'
 line_type: solid
 ```
 Used for top-level grouping nodes. The D3 renderer detects nodes that share a Organigram Node Type background colour and draws a shaded cluster rectangle behind them, labelled with the top node's title. This makes departments visually distinct sections in the chart.
 
-#### `position`
+#### `direction`
 ```yaml
-label: Position
+label: Direction
 box_font_size: 11
-box_font_color: '#1a1a18'
-box_background: '#ffffff'
-line_size: '0.5'
-line_color: '#888780'
+box_font_color: '#FFFFFF'
+box_background: '#004494'
+line_size: '2'
+line_color: '#002F6C'
 line_type: solid
 ```
-The default node type for individual job positions. Clean white background, neutral grey connector line.
+Used for top-level direction nodes.
 
 #### `role`
 ```yaml
 label: Role
 box_font_size: 11
-box_font_color: '#1a1a18'
-box_background: '#F9F9F7'
-line_size: '0.5'
-line_color: '#888780'
-line_type: dashed
+box_font_color: '#5A2D00'
+box_background: '#FDF6E3'
+line_size: '1.5'
+line_color: '#C9A800'
+line_type: solid
 ```
-A functional role as distinct from a formal position. Off-white background and a dashed connector line signal a softer relationship in the hierarchy.
+A functional role as distinct from a formal position.
 
 ### Managing Organigram Node Types
 
@@ -289,15 +295,15 @@ When the D3 renderer fetches `/organigram/{nid}/data`, every node in the JSON in
 {
   "id": 42,
   "title": "Head of Engineering",
-  "organigram_node_type": "position",
+  "organigram_node_type": "direction",
   "organigram_node_type_settings": {
-    "id": "position",
-    "label": "Position",
+    "id": "direction",
+    "label": "Direction",
     "box_font_size": 11,
-    "box_font_color": "#1a1a18",
-    "box_background": "#ffffff",
-    "line_size": "0.5",
-    "line_color": "#888780",
+    "box_font_color": "#FFFFFF",
+    "box_background": "#004494",
+    "line_size": "2",
+    "line_color": "#002F6C",
     "line_type": "solid",
     "line_dash_array": "none"
   }

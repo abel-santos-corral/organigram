@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - organigram
+    - organigram_node_types_kickstarter
+id: team
+label: 'Team'
+box_font_size: 11
+box_font_color: '#2A2A2A'
+box_background: '#E0E0E0'
+line_size: '1.5'
+line_color: '#888888'
+line_type: 'solid'

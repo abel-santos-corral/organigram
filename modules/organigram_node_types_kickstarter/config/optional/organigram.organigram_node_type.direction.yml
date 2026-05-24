@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - organigram
+    - organigram_node_types_kickstarter
+id: direction
+label: 'Direction'
+box_font_size: 11
+box_font_color: '#FFFFFF'
+box_background: '#004494'
+line_size: '2'
+line_color: '#002F6C'
+line_type: 'solid'

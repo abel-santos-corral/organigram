@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - organigram
+    - organigram_node_types_kickstarter
+id: department
+label: 'Department'
+box_font_size: 11
+box_font_color: '#3A2800'
+box_background: '#F5D04A'
+line_size: '1.5'
+line_color: '#C9A800'
+line_type: 'solid'

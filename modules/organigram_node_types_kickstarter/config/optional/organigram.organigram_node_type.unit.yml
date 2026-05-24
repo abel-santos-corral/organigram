@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - organigram
+    - organigram_node_types_kickstarter
+id: unit
+label: 'Unit'
+box_font_size: 11
+box_font_color: '#1A2A4A'
+box_background: '#D4E8FF'
+line_size: '1.5'
+line_color: '#2557A7'
+line_type: 'solid'

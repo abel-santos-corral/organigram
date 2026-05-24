@@ -1,0 +1,112 @@
+<?php
+
+/**
+ * @file
+ * Install hooks for the Organigram node types kickstarter module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function organigram_node_types_kickstarter_requirements(string $phase): array {
+  $requirements = [];
+
+  if ($phase !== 'install') {
+    return $requirements;
+  }
+
+  if (!\Drupal::moduleHandler()->moduleExists('organigram')) {
+    $requirements['organigram_node_types_kickstarter_organigram'] = [
+      'title' => t('Organigram node types kickstarter'),
+      'description' => t('The Organigram module must be installed before the kickstarter node type configuration can be installed.'),
+      'severity' => REQUIREMENT_ERROR,
+    ];
+  }
+
+  if (!\Drupal::entityTypeManager()->hasDefinition('organigram_node_type')) {
+    $requirements['organigram_node_types_kickstarter_entity_type'] = [
+      'title' => t('Organigram node types kickstarter'),
+      'description' => t('The organigram_node_type config entity must exist before the kickstarter node type configuration can be installed.'),
+      'severity' => REQUIREMENT_ERROR,
+    ];
+  }
+
+  return $requirements;
+}
+
+/**
+ * Implements hook_install().
+ */
+function organigram_node_types_kickstarter_install(): void {
+  if (
+    !\Drupal::moduleHandler()->moduleExists('organigram') ||
+    !\Drupal::entityTypeManager()->hasDefinition('organigram_node_type')
+  ) {
+    return;
+  }
+
+  $module_path = \Drupal::service('extension.list.module')
+    ->getPath('organigram_node_types_kickstarter');
+  $config_path = DRUPAL_ROOT . '/' . $module_path . '/config/optional';
+  $config_storage = new \Drupal\Core\Config\FileStorage($config_path);
+  $node_type_storage = \Drupal::entityTypeManager()
+    ->getStorage('organigram_node_type');
+
+  foreach ($config_storage->listAll('organigram.organigram_node_type.') as $name) {
+    $data = $config_storage->read($name);
+    if (empty($data['id'])) {
+      continue;
+    }
+
+    $node_type = $node_type_storage->load($data['id']);
+    if ($node_type === NULL) {
+      $node_type_storage->create($data)->save();
+      continue;
+    }
+
+    foreach ($data as $key => $value) {
+      if ($key !== 'id' && $key !== 'uuid') {
+        $node_type->set($key, $value);
+      }
+    }
+    $node_type->save();
+  }
+
+  organigram_node_types_kickstarter_migrate_position_to_direction();
+
+  if ($position = $node_type_storage->load('position')) {
+    $position->delete();
+  }
+
+  \Drupal::messenger()->addStatus(t('Default organigram node types have been installed.'));
+}
+
+/**
+ * Reassigns existing nodes from the old Position node type to Direction.
+ */
+function organigram_node_types_kickstarter_migrate_position_to_direction(): void {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $tables = [
+    'node__field_organigram_node_type',
+    'node_revision__field_organigram_node_type',
+  ];
+
+  foreach ($tables as $table) {
+    if (!$schema->tableExists($table)) {
+      continue;
+    }
+
+    foreach (['target_id', 'value'] as $suffix) {
+      $column = 'field_organigram_node_type_' . $suffix;
+      if (!$schema->fieldExists($table, $column)) {
+        continue;
+      }
+
+      $database->update($table)
+        ->fields([$column => 'direction'])
+        ->condition($column, 'position')
+        ->execute();
+    }
+  }
+}

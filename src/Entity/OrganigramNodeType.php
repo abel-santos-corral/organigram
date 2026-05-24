@@ -167,6 +167,7 @@ class OrganigramNodeType extends ConfigEntityBase implements OrganigramNodeTypeI
     return [
       '0.5' => '0.5 px',
       '1'   => '1 px',
+      '1.5' => '1.5 px',
       '2'   => '2 px',
     ];
   }

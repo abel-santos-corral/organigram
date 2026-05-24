@@ -1,0 +1,7 @@
+name: 'Organigram node types kickstarter'
+type: module
+description: 'Provides some basic initial organigram node types: Direction, Department, Role, Task Force, Team and Unit.'
+core_version_requirement: ^10 || ^11
+package: Organigram
+dependencies:
+  - organigram:organigram
