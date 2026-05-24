@@ -5,7 +5,7 @@
  * Install hooks for the Organigram node types kickstarter module.
  */
 
-use Drupal\Core\Config\FileStorage;
+use Drupal\organigram_node_types_kickstarter\Installer\NodeTypesKickstarterInstaller;
 
 /**
  * Implements hook_requirements().
@@ -40,68 +40,7 @@ function organigram_node_types_kickstarter_requirements(string $phase): array {
  * Implements hook_install().
  */
 function organigram_node_types_kickstarter_install(): void {
-  if (
-    !\Drupal::moduleHandler()->moduleExists('organigram') ||
-    !\Drupal::entityTypeManager()->hasDefinition('organigram_node_type')
-  ) {
-    return;
-  }
-
-  $module_path = \Drupal::service('extension.list.module')
-    ->getPath('organigram_node_types_kickstarter');
-  $config_path = DRUPAL_ROOT . '/' . $module_path . '/config/optional';
-  $config_storage = new FileStorage($config_path);
-  $node_type_storage = \Drupal::entityTypeManager()
-    ->getStorage('organigram_node_type');
-
-  foreach ($config_storage->listAll('organigram.organigram_node_type.') as $name) {
-    $data = $config_storage->read($name);
-    if (empty($data['id'])) {
-      continue;
-    }
-
-    $node_type = $node_type_storage->load($data['id']);
-    if ($node_type === NULL) {
-      $node_type_storage->create($data)->save();
-      continue;
-    }
-
-    foreach ($data as $key => $value) {
-      if ($key !== 'id' && $key !== 'uuid') {
-        $node_type->set($key, $value);
-      }
-    }
-    $node_type->save();
-  }
-
-  $database = \Drupal::database();
-  $schema = $database->schema();
-  $tables = [
-    'node__field_organigram_node_type',
-    'node_revision__field_organigram_node_type',
-  ];
-
-  foreach ($tables as $table) {
-    if (!$schema->tableExists($table)) {
-      continue;
-    }
-
-    foreach (['target_id', 'value'] as $suffix) {
-      $column = 'field_organigram_node_type_' . $suffix;
-      if (!$schema->fieldExists($table, $column)) {
-        continue;
-      }
-
-      $database->update($table)
-        ->fields([$column => 'direction'])
-        ->condition($column, 'position')
-        ->execute();
-    }
-  }
-
-  if ($position = $node_type_storage->load('position')) {
-    $position->delete();
-  }
-
-  \Drupal::messenger()->addStatus(t('Default organigram node types have been installed.'));
+  $installer = \Drupal::service('class_resolver')
+    ->getInstanceFromDefinition(NodeTypesKickstarterInstaller::class);
+  $installer->install();
 }
