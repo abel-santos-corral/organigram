@@ -12,7 +12,7 @@ use Drupal\node\NodeInterface;
 /**
  * Implements hook_theme().
  */
-function organigram_theme($_existing, $_type, $_theme, $_path): array {
+function organigram_theme(): array {
   return [
     'organigram_display' => [
       'variables' => [
@@ -40,7 +40,7 @@ function template_preprocess_organigram_display(array &$variables): void {
 /**
  * Implements hook_form_alter().
  */
-function organigram_form_alter(array &$form, FormStateInterface $form_state, string $_form_id): void {
+function organigram_form_alter(array &$form, FormStateInterface $form_state): void {
   $form_object = $form_state->getFormObject();
   if (!$form_object || !method_exists($form_object, 'getEntity')) {
     return;
