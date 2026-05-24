@@ -48,6 +48,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  *     "line_type"
  *   }
  * )
+ *
+ * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class OrganigramNodeType extends ConfigEntityBase implements OrganigramNodeTypeInterface {
 
