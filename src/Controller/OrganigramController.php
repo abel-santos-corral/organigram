@@ -11,7 +11,6 @@ use Drupal\node\NodeInterface;
 use Drupal\organigram\Entity\OrganigramNodeTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Handles the organigram display page and JSON data endpoint.
@@ -39,7 +38,7 @@ class OrganigramController extends ControllerBase {
   /**
    * The entity type manager.
    */
-  protected EntityTypeManagerInterface $organigramEntityTypeManager;
+  protected EntityTypeManagerInterface $entityManager;
 
   /**
    * The file URL generator.
@@ -53,7 +52,7 @@ class OrganigramController extends ControllerBase {
     EntityTypeManagerInterface $entity_type_manager,
     FileUrlGeneratorInterface $file_url_generator,
   ) {
-    $this->organigramEntityTypeManager = $entity_type_manager;
+    $this->entityManager = $entity_type_manager;
     $this->fileUrlGenerator = $file_url_generator;
   }
 
@@ -111,7 +110,7 @@ class OrganigramController extends ControllerBase {
   /**
    * Returns the organigram data as JSON.
    */
-  public function data(NodeInterface $node, Request $request): JsonResponse {
+  public function data(NodeInterface $node): JsonResponse {
     return new JsonResponse($this->buildNodeData($node, 0));
   }
 
@@ -128,7 +127,7 @@ class OrganigramController extends ControllerBase {
     $data = [
       'id'     => (int) $node->id(),
       'title'  => $node->getTitle(),
-      'is_hidden' => $this->fieldBool($node, 'field_is_hidden', FALSE),
+      'is_hidden' => $this->fieldBool($node, 'field_is_hidden'),
 
       'organigram_node_type'          => NULL,
       'organigram_node_type_settings' => NULL,
@@ -157,20 +156,20 @@ class OrganigramController extends ControllerBase {
       $node->hasField('field_organigram_node_type') &&
       !$node->get('field_organigram_node_type')->isEmpty()
     ) {
-      /** @var \Drupal\organigram\Entity\OrganigramNodeTypeInterface|null $gt */
-      $gt = $node->get('field_organigram_node_type')->entity;
-      if ($gt instanceof OrganigramNodeTypeInterface) {
-        $data['organigram_node_type'] = $gt->id();
+      /** @var \Drupal\organigram\Entity\OrganigramNodeTypeInterface|null $node_type */
+      $node_type = $node->get('field_organigram_node_type')->entity;
+      if ($node_type instanceof OrganigramNodeTypeInterface) {
+        $data['organigram_node_type'] = $node_type->id();
         $data['organigram_node_type_settings'] = [
-          'id'             => $gt->id(),
-          'label'          => $gt->label(),
-          'box_font_size'  => $gt->getBoxFontSize(),
-          'box_font_color' => $gt->getBoxFontColor(),
-          'box_background' => $gt->getBoxBackground(),
-          'line_size'      => $gt->getLineSize(),
-          'line_color'     => $gt->getLineColor(),
-          'line_type'      => $gt->getLineType(),
-          'line_dash_array' => $gt->getLineDashArray(),
+          'id'             => $node_type->id(),
+          'label'          => $node_type->label(),
+          'box_font_size'  => $node_type->getBoxFontSize(),
+          'box_font_color' => $node_type->getBoxFontColor(),
+          'box_background' => $node_type->getBoxBackground(),
+          'line_size'      => $node_type->getLineSize(),
+          'line_color'     => $node_type->getLineColor(),
+          'line_type'      => $node_type->getLineType(),
+          'line_dash_array' => $node_type->getLineDashArray(),
         ];
       }
     }
@@ -190,7 +189,7 @@ class OrganigramController extends ControllerBase {
    * Builds child node data for a parent node.
    */
   protected function buildChildren(NodeInterface $node, int $depth): array {
-    $storage = $this->organigramEntityTypeManager->getStorage('node');
+    $storage = $this->entityManager->getStorage('node');
     $child_ids = $storage->getQuery()
       ->condition('type', 'organigram_node')
       ->condition('field_parent_node', $node->id())
@@ -234,18 +233,20 @@ class OrganigramController extends ControllerBase {
       if (!$related instanceof NodeInterface) {
         continue;
       }
-      $gt = NULL;
+      $node_type_id = NULL;
       if (
         $related->hasField('field_organigram_node_type') &&
         !$related->get('field_organigram_node_type')->isEmpty()
       ) {
         $gt_entity = $related->get('field_organigram_node_type')->entity;
-        $gt = $gt_entity instanceof OrganigramNodeTypeInterface ? $gt_entity->id() : NULL;
+        $node_type_id = $gt_entity instanceof OrganigramNodeTypeInterface
+          ? $gt_entity->id()
+          : NULL;
       }
       $out[] = [
         'id' => (int) $related->id(),
         'title' => $related->getTitle(),
-        'organigram_node_type' => $gt,
+        'organigram_node_type' => $node_type_id,
       ];
     }
     return $out;
@@ -264,9 +265,9 @@ class OrganigramController extends ControllerBase {
   /**
    * Returns a boolean field value.
    */
-  protected function fieldBool(NodeInterface $node, string $field_name, bool $default = FALSE): bool {
+  protected function fieldBool(NodeInterface $node, string $field_name): bool {
     if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
-      return $default;
+      return FALSE;
     }
     return (bool) $node->get($field_name)->value;
   }
