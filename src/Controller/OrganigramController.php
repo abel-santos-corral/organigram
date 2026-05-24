@@ -5,8 +5,8 @@ namespace Drupal\organigram\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
-use Drupal\file\FileInterface;
 use Drupal\Core\Url;
+use Drupal\file\FileInterface;
 use Drupal\node\NodeInterface;
 use Drupal\organigram\Entity\OrganigramNodeTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -17,8 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
  * Handles the organigram display page and JSON data endpoint.
  *
  * The /organigram/{nid}/data endpoint returns the complete hierarchical tree.
- * Each node includes a `organigram_node_type_settings` object with visual properties
- * defined in the Organigram Node Type config entity:
+ * Each node includes a `organigram_node_type_settings` object with visual
+ * properties defined in the Organigram Node Type config entity:
  *
  * @code
  * "organigram_node_type_settings": {
@@ -36,17 +36,30 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class OrganigramController extends ControllerBase {
 
+  /**
+   * The entity type manager.
+   */
   protected EntityTypeManagerInterface $organigramEntityTypeManager;
+
+  /**
+   * The file URL generator.
+   */
   protected FileUrlGeneratorInterface $fileUrlGenerator;
 
+  /**
+   * Constructs an OrganigramController object.
+   */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     FileUrlGeneratorInterface $file_url_generator,
   ) {
     $this->organigramEntityTypeManager = $entity_type_manager;
-    $this->fileUrlGenerator  = $file_url_generator;
+    $this->fileUrlGenerator = $file_url_generator;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     $entity_type_manager = $container->get('entity_type.manager');
     $file_url_generator = $container->get('file_url_generator');
@@ -59,13 +72,16 @@ class OrganigramController extends ControllerBase {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Routes
-  // ---------------------------------------------------------------------------
-
+  /**
+   * Displays the organigram for a root node.
+   */
   public function display(NodeInterface $node): array {
-    $dataUrl = Url::fromRoute('organigram.data', ['node' => $node->id()], ['absolute' => TRUE])->toString();
-    \Drupal::messenger()->addStatus(t('ITSSSSS : @url', ['@url' => $dataUrl]));
+    $dataUrl = Url::fromRoute(
+      'organigram.data',
+      ['node' => $node->id()],
+      ['absolute' => TRUE]
+    )->toString();
+
     return [
       '#theme' => 'organigram_display',
       '#root_node_id' => $node->id(),
@@ -80,23 +96,28 @@ class OrganigramController extends ControllerBase {
         ],
       ],
       '#cache' => [
-        'tags' => $node->getCacheTags(), // Invalidates this cache if the node is edited
+        'tags' => $node->getCacheTags(),
       ],
     ];
   }
 
+  /**
+   * Returns the page title for an organigram display.
+   */
   public function title(NodeInterface $node): string {
     return $node->getTitle();
   }
 
+  /**
+   * Returns the organigram data as JSON.
+   */
   public function data(NodeInterface $node, Request $request): JsonResponse {
     return new JsonResponse($this->buildNodeData($node, 0));
   }
 
-  // ---------------------------------------------------------------------------
-  // Tree builder
-  // ---------------------------------------------------------------------------
-
+  /**
+   * Builds render data for one organigram node and its descendants.
+   */
   protected function buildNodeData(NodeInterface $node, int $depth): ?array {
     if ($depth > 15) {
       return NULL;
@@ -109,7 +130,6 @@ class OrganigramController extends ControllerBase {
       'title'  => $node->getTitle(),
       'is_hidden' => $this->fieldBool($node, 'field_is_hidden', FALSE),
 
-      // Organigram Node Type replaces the old hardcoded list — includes full visual spec.
       'organigram_node_type'          => NULL,
       'organigram_node_type_settings' => NULL,
 
@@ -119,16 +139,24 @@ class OrganigramController extends ControllerBase {
       'position_title'      => $this->fieldString($node, 'field_position_title'),
       'vacant'              => $is_vacant,
 
-      'field_scope_of_works_title' => $this->fieldString($node, 'field_scope_of_works_title'),
-      'field_scope_of_work' => $this->fieldProcessedText($node, 'field_scope_of_work'),
+      'field_scope_of_works_title' => $this->fieldString(
+        $node,
+        'field_scope_of_works_title'
+      ),
+      'field_scope_of_work' => $this->fieldProcessedText(
+        $node,
+        'field_scope_of_work'
+      ),
       'start_date'    => $this->fieldString($node, 'field_start_date'),
       'end_date'      => $this->fieldString($node, 'field_end_date'),
       'relation_type' => $this->fieldString($node, 'field_relation_type'),
       'related_nodes' => $this->buildRelatedNodes($node),
     ];
 
-    // ── Resolve OrganigramNodeType config entity ───────────────────────────────────────
-    if ($node->hasField('field_organigram_node_type') && !$node->get('field_organigram_node_type')->isEmpty()) {
+    if (
+      $node->hasField('field_organigram_node_type') &&
+      !$node->get('field_organigram_node_type')->isEmpty()
+    ) {
       /** @var \Drupal\organigram\Entity\OrganigramNodeTypeInterface|null $gt */
       $gt = $node->get('field_organigram_node_type')->entity;
       if ($gt instanceof OrganigramNodeTypeInterface) {
@@ -142,12 +170,11 @@ class OrganigramController extends ControllerBase {
           'line_size'      => $gt->getLineSize(),
           'line_color'     => $gt->getLineColor(),
           'line_type'      => $gt->getLineType(),
-          'line_dash_array'=> $gt->getLineDashArray(),
+          'line_dash_array' => $gt->getLineDashArray(),
         ];
       }
     }
 
-    // ── Responsible person (hidden when Vacant) ───────────────────────────────
     if (!$is_vacant) {
       $data['responsible_name']     = $this->fieldString($node, 'field_responsible_name');
       $data['responsible_photo']    = $this->fieldImageUrl($node, 'field_responsible_photo');
@@ -159,10 +186,9 @@ class OrganigramController extends ControllerBase {
     return $data;
   }
 
-  // ---------------------------------------------------------------------------
-  // Helpers
-  // ---------------------------------------------------------------------------
-
+  /**
+   * Builds child node data for a parent node.
+   */
   protected function buildChildren(NodeInterface $node, int $depth): array {
     $storage = $this->organigramEntityTypeManager->getStorage('node');
     $child_ids = $storage->getQuery()
@@ -192,8 +218,14 @@ class OrganigramController extends ControllerBase {
     return $children;
   }
 
+  /**
+   * Builds related node metadata.
+   */
   protected function buildRelatedNodes(NodeInterface $node): array {
-    if (!$node->hasField('field_related_nodes') || $node->get('field_related_nodes')->isEmpty()) {
+    if (
+      !$node->hasField('field_related_nodes') ||
+      $node->get('field_related_nodes')->isEmpty()
+    ) {
       return [];
     }
     $out = [];
@@ -203,42 +235,79 @@ class OrganigramController extends ControllerBase {
         continue;
       }
       $gt = NULL;
-      if ($related->hasField('field_organigram_node_type') && !$related->get('field_organigram_node_type')->isEmpty()) {
+      if (
+        $related->hasField('field_organigram_node_type') &&
+        !$related->get('field_organigram_node_type')->isEmpty()
+      ) {
         $gt_entity = $related->get('field_organigram_node_type')->entity;
         $gt = $gt_entity instanceof OrganigramNodeTypeInterface ? $gt_entity->id() : NULL;
       }
-      $out[] = ['id' => (int) $related->id(), 'title' => $related->getTitle(), 'organigram_node_type' => $gt];
+      $out[] = [
+        'id' => (int) $related->id(),
+        'title' => $related->getTitle(),
+        'organigram_node_type' => $gt,
+      ];
     }
     return $out;
   }
 
+  /**
+   * Returns a scalar field value.
+   */
   protected function fieldString(NodeInterface $node, string $field_name, mixed $default = NULL): mixed {
-    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) return $default;
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return $default;
+    }
     return $node->get($field_name)->value ?? $default;
   }
 
+  /**
+   * Returns a boolean field value.
+   */
   protected function fieldBool(NodeInterface $node, string $field_name, bool $default = FALSE): bool {
-    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) return $default;
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return $default;
+    }
     return (bool) $node->get($field_name)->value;
   }
 
+  /**
+   * Returns a processed text field value.
+   */
   protected function fieldProcessedText(NodeInterface $node, string $field_name): ?string {
-    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) return NULL;
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return NULL;
+    }
     return (string) $node->get($field_name)->first()->get('processed')->getValue();
   }
 
+  /**
+   * Returns a file field absolute URL.
+   */
   protected function fieldFileUrl(NodeInterface $node, string $field_name): ?string {
-    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) return NULL;
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return NULL;
+    }
     $file = $node->get($field_name)->entity;
-    return $file instanceof FileInterface ? $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri()) : NULL;
+    return $file instanceof FileInterface
+      ? $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri())
+      : NULL;
   }
 
+  /**
+   * Returns an image field absolute URL.
+   */
   protected function fieldImageUrl(NodeInterface $node, string $field_name): ?string {
     return $this->fieldFileUrl($node, $field_name);
   }
 
+  /**
+   * Returns a link field URI.
+   */
   protected function fieldLink(NodeInterface $node, string $field_name): ?string {
-    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) return NULL;
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return NULL;
+    }
     return $node->get($field_name)->uri ?? NULL;
   }
 
