@@ -42,9 +42,7 @@ class OrganigramNodeTypeListBuilder extends ConfigEntityListBuilder {
       '<span style="display:inline-flex;align-items:center;gap:6px;">'
         . '<svg width="40" height="10" style="overflow:visible">'
         . '<line x1="0" y1="5" x2="40" y2="5" stroke="%s" stroke-width="%s" stroke-dasharray="%s"/>'
-        . '</svg>'
-        . '<small>%s / %s px / %s</small>'
-        . '</span>',
+        . '</svg><small>%s / %s px / %s</small></span>',
       $entity->getLineColor(),
       $entity->getLineSize(),
       $entity->getLineDashArray(),
