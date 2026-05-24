@@ -3,11 +3,7 @@
 namespace Drupal\organigram\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\Core\Entity\EntityDeleteForm;
-use Drupal\Core\Routing\AdminHtmlRouteProvider;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\organigram\Form\OrganigramNodeTypeForm;
-use Drupal\organigram\OrganigramNodeTypeListBuilder;
 
 /**
  * Defines the Organigram Node Type config entity.
@@ -55,9 +51,6 @@ use Drupal\organigram\OrganigramNodeTypeListBuilder;
  */
 class OrganigramNodeType extends ConfigEntityBase implements OrganigramNodeTypeInterface {
 
-
-  // ── Entity properties (persisted in config) ────────────────────────────────
-
   /**
    * Machine name, e.g. 'department'.
    */
@@ -84,7 +77,7 @@ class OrganigramNodeType extends ConfigEntityBase implements OrganigramNodeTypeI
   protected string $box_background = '#ffffff';
 
   /**
-   * Line: width as string — '0.5' | '1' | '2' (default '1').
+   * Line: width as string, for example '0.5', '1', or '2'.
    */
   protected string $line_size = '1';
 
@@ -97,8 +90,6 @@ class OrganigramNodeType extends ConfigEntityBase implements OrganigramNodeTypeI
    * Line: type — solid | dashed | dotted | dashdot (default 'solid').
    */
   protected string $line_type = 'solid';
-
-  // ── OrganigramNodeTypeInterface ─────────────────────────────────────────────────────
 
   /**
    * {@inheritdoc}
@@ -152,16 +143,15 @@ class OrganigramNodeType extends ConfigEntityBase implements OrganigramNodeTypeI
       'dashed'  => '8,4',
       'dotted'  => '2,3',
       'dashdot' => '8,3,2,3',
-      default   => 'none',   // solid
+      default => 'none',
     };
   }
-
-  // ── Static helpers ─────────────────────────────────────────────────────────
 
   /**
    * Returns the allowed line size options (value => label).
    *
    * @return array<string, string>
+   *   The allowed line size options.
    */
   public static function lineSizeOptions(): array {
     return [
@@ -176,6 +166,7 @@ class OrganigramNodeType extends ConfigEntityBase implements OrganigramNodeTypeI
    * Returns the allowed line type options (value => label).
    *
    * @return array<string, string>
+   *   The allowed line type options.
    */
   public static function lineTypeOptions(): array {
     return [
