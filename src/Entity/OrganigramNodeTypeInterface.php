@@ -7,13 +7,11 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 /**
  * Defines the interface for Organigram Node Type config entities.
  *
- * A Organigram Node Type defines the visual appearance of a organigram_node in the
- * organigram: box styling (font, colour, background) and connector line
- * styling (weight, colour, dash pattern).
+ * An Organigram Node Type defines the visual appearance of an organigram_node.
+ *
+ * It controls box styling and connector line styling.
  */
 interface OrganigramNodeTypeInterface extends ConfigEntityInterface {
-
-  // ── Box ────────────────────────────────────────────────────────────────────
 
   /**
    * Returns the node box font size in pixels.
@@ -30,8 +28,6 @@ interface OrganigramNodeTypeInterface extends ConfigEntityInterface {
    */
   public function getBoxBackground(): string;
 
-  // ── Line ───────────────────────────────────────────────────────────────────
-
   /**
    * Returns the connector line width as a string (e.g. '0.5', '1', '2').
    */
@@ -46,8 +42,6 @@ interface OrganigramNodeTypeInterface extends ConfigEntityInterface {
    * Returns the connector line type: solid | dashed | dotted | dashdot.
    */
   public function getLineType(): string;
-
-  // ── Helpers ────────────────────────────────────────────────────────────────
 
   /**
    * Returns the SVG stroke-dasharray value for the configured line type.
