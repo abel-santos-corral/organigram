@@ -115,7 +115,6 @@
         .org-link   { fill:none; stroke:var(--organigram-link-color,#ccc); stroke-width:var(--organigram-link-width,.5); stroke-dasharray:var(--organigram-link-dasharray,none); }
         .org-node   { cursor:pointer; }
         .org-rect   { fill:var(--organigram-node-bg,#fff); stroke:var(--organigram-node-border,#ccc); stroke-width:var(--organigram-node-border-width,.5); transition:stroke .15s; }
-        .org-rect--vacant   { stroke-dasharray:5,3; fill:var(--organigram-vacant-bg,#f9f9f7); }
         .org-rect--selected { stroke-width:2; stroke:var(--organigram-selected-border,#333); }
         .org-title  { font-size:var(--organigram-node-font-size,10px); font-weight:600; font-family:system-ui,sans-serif; fill:var(--organigram-node-font-color,var(--organigram-text,#1a1a18)); }
         .org-person { font-size:9px;  font-family:system-ui,sans-serif; fill:var(--organigram-node-font-color,var(--organigram-subtext,#777)); }
@@ -148,8 +147,8 @@
           const sel = d3.select(this);
           if (gts) {
             sel.style('--organigram-link-color', gts.line_color)
-               .style('--organigram-link-width', gts.line_size)
-               .style('--organigram-link-dasharray', gts.line_dash_array === 'none' ? 'none' : gts.line_dash_array);
+              .style('--organigram-link-width', gts.line_size)
+              .style('--organigram-link-dasharray', gts.line_dash_array === 'none' ? 'none' : gts.line_dash_array);
           }
         });
 
@@ -178,7 +177,7 @@
 
       // Node rectangle — styled from organigram_node_type_settings when available.
       nodeG.append('rect')
-        .attr('class', d => `org-rect${d.data.vacant ? ' org-rect--vacant' : ''}`)
+        .attr('class', 'org-rect')
         .attr('x', -NODE_W / 2).attr('y', -NODE_H / 2)
         .attr('width', NODE_W).attr('height', NODE_H)
         .attr('rx', 7)
@@ -186,11 +185,9 @@
           const gts = d.data.organigram_node_type_settings;
           const sel = d3.select(this);
           if (gts) {
-            if (!d.data.vacant) {
-              sel.style('--organigram-node-bg', gts.box_background);
-            }
+            sel.style('--organigram-node-bg', gts.box_background);
             sel.style('--organigram-node-border', gts.line_color)
-               .style('--organigram-node-border-width', gts.line_size);
+              .style('--organigram-node-border-width', gts.line_size);
           }
         });
 
