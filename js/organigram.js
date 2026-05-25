@@ -34,7 +34,10 @@
       console.log('dataUrl:', dataUrl);
       fetch(dataUrl, { credentials: 'same-origin' })
         .then(r => r.json())
-        .then(data => renderOrganigram(container, data))
+        .then(data => {
+          const hierarchy = buildHierarchy(data);
+          renderOrganigram(container, hierarchy);
+        })
         .catch(err => {
           console.error('[Organigram] Failed to load data:', err);
           container.innerHTML = '<p class="organigram__error">Failed to load organigram data.</p>';
@@ -51,6 +54,61 @@
   const DEPT_PAD   = 18;   // padding around department cluster rects
   const DEPT_LABEL = 14;   // height reserved for cluster label
 
+  function buildHierarchy(contract) {
+
+    const nodes = contract.graph.nodes;
+    const edges = contract.graph.edges;
+    const visuals = contract.visuals || {};
+
+    const childrenMap = {};
+
+    Object.values(nodes).forEach(node => {
+      childrenMap[node.id] = [];
+    });
+
+    edges.forEach(edge => {
+      if (edge.type !== 'hierarchical') {
+        return;
+      }
+
+      childrenMap[edge.source].push(edge.target);
+    });
+
+    function buildNode(nodeId) {
+      const node = nodes[nodeId];
+
+      const visual = visuals[node.type] || {};
+
+      const data = {
+        id: node.id,
+        title: node.title,
+
+        organigram_node_type: node.type,
+
+        organigram_node_type_settings: {
+          id: visual.id,
+          label: visual.label,
+
+          box_background: visual.palette?.background,
+          box_font_color: visual.palette?.foreground,
+
+          line_color: visual.palette?.border,
+          line_size: visual.border?.width,
+          line_type: visual.border?.style,
+        },
+
+        ...node.data,
+      };
+
+      data.children = childrenMap[nodeId].map(childId => {
+        return buildNode(childId);
+      });
+
+      return data;
+    }
+
+    return buildNode(contract.meta.root);
+  }
   // ── Main render ───────────────────────────────────────────────────────────
   function renderOrganigram(container, treeData) {
     container.innerHTML = '';
