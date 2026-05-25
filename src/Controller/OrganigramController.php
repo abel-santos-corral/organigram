@@ -302,14 +302,4 @@ class OrganigramController extends ControllerBase {
     return $this->fieldFileUrl($node, $field_name);
   }
 
-  /**
-   * Returns a link field URI.
-   */
-  protected function fieldLink(NodeInterface $node, string $field_name): ?string {
-    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
-      return NULL;
-    }
-    return $node->get($field_name)->uri ?? NULL;
-  }
-
 }
