@@ -55,6 +55,7 @@ function organigram_form_node_organigram_node_form_alter(array &$form, FormState
     );
   }
 
+  // When Vacant is checked, hide person-specific fields.
   $vacant_selector = ':input[name="field_is_vacant[value]"]';
   foreach ([
     'field_responsible_name',
@@ -64,6 +65,26 @@ function organigram_form_node_organigram_node_form_alter(array &$form, FormState
   ] as $field_name) {
     if (isset($form[$field_name])) {
       $form[$field_name]['#states']['invisible'][$vacant_selector] = ['checked' => TRUE];
+    }
+  }
+
+  // When Enable modal is unchecked, hide all modal-dependent fields.
+  // These fields are only meaningful when the detail modal is shown.
+  $enable_modal_selector = ':input[name="field_enable_modal[value]"]';
+  foreach ([
+    'field_start_date',
+    'field_end_date',
+    'field_scope_of_works_title',
+    'field_scope_of_work',
+    'field_relation_type',
+    'field_is_vacant',
+    'field_responsible_name',
+    'field_responsible_photo',
+    'field_cv_document',
+    'field_declaration_interest',
+  ] as $field_name) {
+    if (isset($form[$field_name])) {
+      $form[$field_name]['#states']['visible'][$enable_modal_selector] = ['checked' => TRUE];
     }
   }
 }

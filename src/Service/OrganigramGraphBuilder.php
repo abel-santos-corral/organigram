@@ -204,6 +204,13 @@ class OrganigramGraphBuilder {
     bool $is_vacant,
   ): array {
 
+    // Determine enable_modal: default TRUE for backward compatibility when
+    // the field does not yet exist on a node (e.g. nodes created before the
+    // field was added via organigram_update_9001).
+    $enable_modal = !$node->hasField('field_enable_modal') || $node->get('field_enable_modal')->isEmpty()
+      ? TRUE
+      : (bool) $node->get('field_enable_modal')->value;
+
     $graph_node = [
       'id' => (int) $node->id(),
       'title' => $node->getTitle(),
@@ -213,11 +220,19 @@ class OrganigramGraphBuilder {
         'is_hidden' => $this->fieldBool($node, 'field_is_hidden'),
         'display_weight' => (int) ($this->fieldString($node, 'field_display_weight') ?? 0),
         'collapsed' => $this->fieldBool($node, 'field_collapsed_default'),
+        'enable_modal' => $enable_modal,
 
         'position_title' => $this->fieldString($node, 'field_position_title'),
 
         'vacant' => $is_vacant,
+      ],
+    ];
 
+    // Modal-dependent fields are only included when modal is enabled.
+    // This keeps the JSON payload lean and avoids leaking data when the
+    // modal is intentionally disabled.
+    if ($enable_modal) {
+      $graph_node['data'] += [
         'field_scope_of_works_title' => $this->fieldString(
           $node,
           'field_scope_of_works_title'
@@ -230,20 +245,18 @@ class OrganigramGraphBuilder {
 
         'start_date' => $this->fieldString($node, 'field_start_date'),
         'end_date' => $this->fieldString($node, 'field_end_date'),
-
         'relation_type' => $this->fieldString($node, 'field_relation_type'),
-
         'related_nodes' => $this->buildRelatedNodes($node),
-      ],
-    ];
-
-    if (!$is_vacant) {
-      $graph_node['data'] += [
-        'responsible_name' => $this->fieldString($node, 'field_responsible_name'),
-        'responsible_photo' => $this->fieldImageUrl($node, 'field_responsible_photo'),
-        'cv' => $this->fieldFileUrl($node, 'field_cv_document'),
-        'declaration_interest' => $this->fieldFileUrl($node, 'field_declaration_interest'),
       ];
+
+      if (!$is_vacant) {
+        $graph_node['data'] += [
+          'responsible_name'    => $this->fieldString($node, 'field_responsible_name'),
+          'responsible_photo'   => $this->fieldImageUrl($node, 'field_responsible_photo'),
+          'cv'                  => $this->fieldFileUrl($node, 'field_cv_document'),
+          'declaration_interest' => $this->fieldFileUrl($node, 'field_declaration_interest'),
+        ];
+      }
     }
 
     return $graph_node;

@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_enable_modal
+field_name: field_enable_modal
+entity_type: node
+type: boolean
+settings:
+  on_label: 'Show'
+  off_label: 'Hide'
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {}
+persist_with_no_fields: false
+custom_storage: false

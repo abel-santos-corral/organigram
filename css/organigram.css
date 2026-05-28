@@ -1,32 +1,377 @@
-/* organigram.css */
-#organigram-container { width:100%; position:relative; }
-.organigram__wrapper { display:flex; gap:16px; align-items:flex-start; width:100%; }
-.organigram__chart { flex:1; min-width:0; overflow:hidden; border:1px solid #e0e0dc; border-radius:12px; background:#fff; padding:8px 0; position:relative; touch-action:none; }
-.organigram__zoom-controls { position:absolute; top:12px; left:12px; z-index:2; display:flex; gap:4px; }
-.organigram__zoom-button { min-width:28px; height:28px; padding:0 8px; border:1px solid #d8d8d2; border-radius:4px; background:#fff; color:#333; font-size:12px; line-height:26px; cursor:pointer; }
-.organigram__zoom-button:hover { background:#f6f6f3; border-color:#bdbdb7; }
-.organigram__modal { width:300px; flex-shrink:0; background:#fff; border:1px solid #e0e0dc; border-radius:12px; padding:20px; display:none; position:relative; align-self:flex-start; }
-.organigram__modal.is-open { display:block; }
-.organigram__modal-close { position:absolute; top:12px; right:14px; background:none; border:none; cursor:pointer; font-size:14px; color:#999; line-height:1; padding:2px 4px; }
-.organigram__modal-close:hover { color:#333; }
-.organigram__error { padding:1rem; color:#c00; }
-.org-modal__header { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
-.org-modal__photo { width:48px; height:48px; border-radius:50%; object-fit:cover; flex:0 0 48px; }
-.org-modal__title-wrap { flex:1; min-width:0; }
-.org-modal__role { font-size:14px; font-weight:600; margin:0 0 2px; line-height:1.3; color:#1a1a18; }
-.org-modal__person { font-size:12px; margin:0; color:#555; }
-.org-modal__person.is-vacant { font-style:italic; color:#aaa; }
-.org-modal__links { display:flex; gap:12px; flex-wrap:wrap; padding:10px 0; border-top:1px solid #eee; border-bottom:1px solid #eee; margin-bottom:12px; }
-.org-modal__link { font-size:12px; color:#1a5cb5; text-decoration:none; display:inline-flex; align-items:center; gap:3px; }
-.org-modal__link:hover { text-decoration:underline; }
-.org-modal__scope { margin-top:12px; }
-.org-modal__scope-heading { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:#888; margin:0 0 8px; }
-.org-modal__section-title { font-size:12px; margin:10px 0 3px; color:#1a1a18; }
-.org-modal__list { margin:0 0 6px; padding-left:16px; font-size:12px; line-height:1.7; color:#333; }
-.org-modal__related h3 { font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:#888; margin:12px 0 4px; }
-.org-modal__related ul { margin:0; padding-left:14px; font-size:12px; color:#333; line-height:1.7; }
-@media (max-width:1024px) {
-  .organigram__wrapper { flex-direction:column; }
-  .organigram__modal { width:100%; order:1; align-self:stretch; box-sizing:border-box; }
-  .organigram__chart { width:100%; order:2; box-sizing:border-box; }
+/**
+ * @file
+ * organigram.css — Styles for the D3 organigram renderer.
+ *
+ * SVG-internal styles (node colours, link strokes, button fills) are injected
+ * inline via organigram.js using CSS custom properties so dark-mode themes can
+ * override them without touching JS.
+ *
+ * Layout behaviour by breakpoint:
+ *  - Desktop  (≥1024px): modal slides in from the RIGHT as an off-canvas panel,
+ *                         side by side with the chart.  [unchanged]
+ *  - Tablet   (768–1023px): modal expands at the TOP; chart sits below.
+ *  - Mobile   (<768px):     same stacking, modal taller.
+ */
+
+/* ── CSS custom property defaults ─────────────────────────────────────────── */
+:root {
+  --organigram-node-bg:           #fff;
+  --organigram-node-border:       #ccc;
+  --organigram-node-border-width: 0.5px;
+  --organigram-node-font-color:   #1a1a18;
+  --organigram-node-font-size:    10px;
+  --organigram-subtext:           #777;
+  --organigram-vacant-text:       #aaa;
+  --organigram-link-color:        #ccc;
+  --organigram-link-width:        0.5px;
+  --organigram-selected-border:   #333;
+  --organigram-hover-border:      #555;
+  --organigram-focus-ring:        #0055cc;
+  --organigram-expand-label:      #333;
+  --organigram-detail-label:      #1a5cb5;
+  --organigram-modal-bg:          #fff;
+  --organigram-modal-border:      #e0e0e0;
+  --organigram-modal-shadow:      0 4px 24px rgba(0, 0, 0, .12);
+  --organigram-modal-width:       340px;
+  --organigram-modal-max-h-tablet: 320px; /* override per project if needed */
+  --organigram-modal-max-h-mobile: 380px;
+  --organigram-zoom-bg:           #f5f5f5;
+  --organigram-zoom-border:       #ccc;
+  --organigram-zoom-color:        #333;
+}
+
+/* ── Wrapper layout ───────────────────────────────────────────────────────── */
+.organigram__wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.organigram__chart {
+  flex: 1 1 auto;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Zoom controls — TOP LEFT ─────────────────────────────────────────────── */
+.organigram__zoom-controls {
+  position: absolute;
+  top: 8px;
+  left: 8px;        /* ← moved from right to left */
+  display: flex;
+  gap: 4px;
+  z-index: 10;
+}
+
+.organigram__zoom-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;   /* WCAG 2.5.5 AAA touch target */
+  min-height: 44px;
+  padding: 0 10px;
+  background: var(--organigram-zoom-bg);
+  border: 1px solid var(--organigram-zoom-border);
+  border-radius: 6px;
+  color: var(--organigram-zoom-color);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+  line-height: 1;
+}
+
+.organigram__zoom-button:hover {
+  background: #e8e8e8;
+  border-color: #aaa;
+}
+
+.organigram__zoom-button:focus-visible {
+  outline: 2px solid var(--organigram-focus-ring);
+  outline-offset: 2px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MODAL — DESKTOP (≥1024px)
+   Off-canvas panel that slides in from the RIGHT, overlapping the chart.
+   ══════════════════════════════════════════════════════════════════════════ */
+.organigram__modal {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--organigram-modal-width);
+  max-width: 100%;
+  background: var(--organigram-modal-bg);
+  border-left: 1px solid var(--organigram-modal-border);
+  box-shadow: var(--organigram-modal-shadow);
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform .22s ease, visibility 0s linear .22s;
+  z-index: 20;
+  padding: 16px;
+  box-sizing: border-box;
+  visibility: hidden;
+}
+
+.organigram__modal.is-open {
+  transform: translateX(0);
+  transition: transform .22s ease, visibility 0s linear 0s;
+  visibility: visible;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MODAL — TABLET (768px – 1023px)
+   Modal expands at the TOP of the wrapper; chart sits below it.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1023px) {
+  /* Stack wrapper vertically so modal appears above the chart. */
+  .organigram__wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    overflow: visible; /* let the modal's height contribute to page flow */
+  }
+
+  .organigram__chart {
+    order: 2; /* chart always below modal */
+  }
+
+  .organigram__modal {
+    order: 1; /* modal always above chart */
+
+    /* Reset desktop positioning */
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    max-width: 100%;
+
+    /* Collapsed: takes no space */
+    max-height: 0;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+
+    /* Slide-down from top instead of slide-in from right */
+    transform: none;
+    border-left: none;
+    border-top: none;
+    border-bottom: 2px solid var(--organigram-modal-border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .10);
+    transition: max-height .28s ease,
+    padding .28s ease,
+    visibility 0s linear .28s;
+    visibility: hidden;
+  }
+
+  .organigram__modal.is-open {
+    max-height: var(--organigram-modal-max-h-tablet); /* 320px default */
+    overflow-y: auto;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    transform: none;
+    transition: max-height .28s ease,
+    padding .28s ease,
+    visibility 0s linear 0s;
+    visibility: visible;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MODAL — MOBILE (<768px)
+   Same stacking as tablet, with a taller modal area.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .organigram__modal.is-open {
+    max-height: var(--organigram-modal-max-h-mobile); /* 380px default */
+  }
+
+  /* On very small screens give the close button a bit more room */
+  .organigram__modal-close {
+    top: 6px;
+    right: 6px;
+  }
+
+  .organigram__modal-body {
+    margin-top: 52px;
+  }
+}
+
+/* ── Modal close button ───────────────────────────────────────────────────── */
+.organigram__modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 44px;   /* WCAG 2.5.5 AAA */
+  height: 44px;
+  background: transparent;
+  border: 1px solid var(--organigram-modal-border);
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  color: #555;
+  transition: background .12s, color .12s;
+  line-height: 1;
+  z-index: 1; /* above modal body */
+}
+
+.organigram__modal-close:hover {
+  background: #f0f0f0;
+  color: #111;
+}
+
+.organigram__modal-close:focus-visible {
+  outline: 2px solid var(--organigram-focus-ring);
+  outline-offset: 2px;
+}
+
+/* ── Modal body ───────────────────────────────────────────────────────────── */
+.organigram__modal-body {
+  margin-top: 44px; /* clear the close button */
+}
+
+.org-modal__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.org-modal__photo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--organigram-modal-border);
+}
+
+.org-modal__title-wrap {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.org-modal__role {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.org-modal__person {
+  font-size: 13px;
+  color: #555;
+  margin: 0;
+}
+
+.org-modal__person.is-vacant {
+  font-style: italic;
+  color: var(--organigram-vacant-text);
+}
+
+.org-modal__links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.org-modal__link {
+  font-size: 13px;
+  color: var(--organigram-detail-label);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.org-modal__link:focus-visible {
+  outline: 2px solid var(--organigram-focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.org-modal__scope {
+  margin-top: 12px;
+}
+
+.org-modal__scope-heading {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #888;
+  margin: 0 0 6px;
+}
+
+.org-modal__scope-content {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #333;
+}
+
+.org-modal__scope-content p {
+  margin: 0 0 8px;
+}
+
+.org-modal__related {
+  margin-top: 12px;
+}
+
+.org-modal__related h3 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #888;
+  margin: 0 0 6px;
+}
+
+.org-modal__related ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+/* ── Error state ──────────────────────────────────────────────────────────── */
+.organigram__error {
+  padding: 16px;
+  color: #c00;
+  font-style: italic;
+}
+
+/* ── Forced-colours (Windows High Contrast) ───────────────────────────────── */
+@media (forced-colors: active) {
+  .organigram__zoom-button,
+  .organigram__modal-close {
+    forced-color-adjust: none;
+    background: ButtonFace;
+    border-color: ButtonText;
+    color: ButtonText;
+  }
+
+  .organigram__zoom-button:focus-visible,
+  .organigram__modal-close:focus-visible,
+  .org-modal__link:focus-visible {
+    outline: 2px solid Highlight;
+  }
+
+  .organigram__modal {
+    border-color: ButtonText;
+  }
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .organigram__modal,
+  .organigram__zoom-button,
+  .organigram__modal-close {
+    transition: none;
+  }
 }

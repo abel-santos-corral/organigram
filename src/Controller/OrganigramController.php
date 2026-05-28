@@ -99,6 +99,9 @@ class OrganigramController extends ControllerBase {
           'organigram' => [
             'dataUrl' => $dataUrl,
             'rootId' => (int) $node->id(),
+            // Translatable legend title — the translation lives in Drupal's
+            // i18n system; JS reads drupalSettings.organigram.legendTitle.
+            'legendTitle' => (string) $this->t('Legend'),
           ],
         ],
       ],

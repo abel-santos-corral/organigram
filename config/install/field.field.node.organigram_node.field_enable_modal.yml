@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_enable_modal
+    - node.type.organigram_node
+id: node.organigram_node.field_enable_modal
+field_name: field_enable_modal
+entity_type: node
+bundle: organigram_node
+label: 'Enable modal'
+description: 'Show or hide the detail modal for this node. When disabled, person details and scope fields are not displayed in the organigram.'
+required: false
+translatable: false
+default_value:
+  - value: 1
+default_value_callback: ''
+settings: {}
+field_type: boolean
