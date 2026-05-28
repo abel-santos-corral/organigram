@@ -76,6 +76,14 @@ class OrganigramGraphBuilder {
       $context
     );
 
+    
+    if (empty($graph['visuals'])) {
+      \Drupal::logger('organigram')->warning(
+        'No visuals generated for organigram @nid.',
+        ['@nid' => $root->id()]
+      );
+    }
+
     return $graph;
   }
 

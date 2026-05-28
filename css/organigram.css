@@ -46,14 +46,15 @@
   align-items: flex-start;
   gap: 0;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .organigram__chart {
   flex: 1 1 auto;
   min-width: 0;
   position: relative;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: visible;
 }
 
 /* ── Zoom controls — TOP LEFT ─────────────────────────────────────────────── */
@@ -374,4 +375,33 @@
   .organigram__modal-close {
     transition: none;
   }
+}
+
+
+/* Legend */
+
+.organigram-legend {
+  pointer-events: none;
+}
+
+.organigram-legend__panel {
+  fill: rgba(255, 255, 255, 0.96);
+  stroke: #d6d6d6;
+  stroke-width: 1;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,.08));
+}
+
+.organigram-legend__title {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #222;
+}
+
+.organigram-legend__label {
+  font-size: 12px;
+  fill: #333;
+}
+
+.organigram-legend__swatch {
+  stroke-width: 1.5;
 }

@@ -70,8 +70,15 @@
   const DEPT_PAD    = 18;
   const DEPT_LABEL  = 14;
 
-  // Space reserved at the bottom of the SVG for the legend.
-  const LEGEND_RESERVED = 76;
+  // Dynamic legend sizing.
+  const LEGEND_PAD_X        = 18;
+  const LEGEND_PAD_Y        = 16;
+  const LEGEND_ITEM_GAP_X   = 18;
+  const LEGEND_ITEM_GAP_Y   = 12;
+  const LEGEND_SQUARE       = 14;
+  const LEGEND_TITLE_HEIGHT = 20;
+  const LEGEND_ROW_HEIGHT   = 22;
+  const LEGEND_MIN_RESERVED = 100;
 
   // ── buildHierarchy ────────────────────────────────────────────────────────
   function buildHierarchy(contract) {
@@ -211,11 +218,22 @@
         if (d.x > x1) x1 = d.x;
       });
 
-      const svgW = (x1 - x0) + NODE_W + MARGIN.left + MARGIN.right;
+      let svgW = (x1 - x0) + NODE_W + MARGIN.left + MARGIN.right;
+
       // Reserve space at the bottom for the legend when node types are defined.
       const hasLegend = Object.keys(visuals).length > 0;
+
+      const legendLayout = calculateLegendLayout(visuals, 900);
+
+      const legendReserved = hasLegend
+        ? Math.max(LEGEND_MIN_RESERVED, legendLayout.height + 24)
+        : 0;
+
+      if (hasLegend) {
+        svgW = Math.max(svgW, legendLayout.width + 80);
+      }
       const svgH = root.height * DY + NODE_H + MARGIN.top + MARGIN.bottom +
-                   (hasLegend ? LEGEND_RESERVED : 0);
+                   (hasLegend ? legendReserved : 0);
       const ox = MARGIN.left + NODE_W / 2 - x0;
       const oy = MARGIN.top  + NODE_H / 2;
 
@@ -225,7 +243,8 @@
         .append('svg')
         .attr('viewBox', `0 0 ${svgW} ${svgH}`)
         .style('width',  '100%')
-        .style('height', 'auto')
+        .style('height', `${svgH}px`)
+        .style('max-width', '100%')
         .style('display', 'block')
         .attr('aria-label', 'Organisational chart');
 
@@ -494,7 +513,78 @@
    * @param {number}       svgH        - Total SVG viewBox height.
    * @param {string}       title       - Translated legend title.
    */
-  function drawLegend(svg, visuals, svgW, svgH, title) {
+
+  function calculateLegendLayout(visuals, availableWidth) {
+    const entries = Object.values(visuals || {})
+      .filter(v => v && (v.label || v.id))
+      .sort((a, b) => (a.label || '').localeCompare(b.label || ''));
+
+    if (!entries.length) {
+      return {
+        entries: [],
+        rows: [],
+        width: 0,
+        height: 0,
+      };
+    }
+
+    const estimatedWidths = entries.map(v => {
+      const label = v.label || v.id || 'Unknown';
+
+      return {
+        data: v,
+        width: Math.max(90, label.length * 8 + 40),
+      };
+    });
+
+    const rows = [];
+    let currentRow = [];
+    let currentWidth = 0;
+
+    estimatedWidths.forEach(item => {
+      const nextWidth = currentWidth === 0
+        ? item.width
+        : currentWidth + LEGEND_ITEM_GAP_X + item.width;
+
+      if (nextWidth > availableWidth && currentRow.length) {
+        rows.push(currentRow);
+        currentRow = [item];
+        currentWidth = item.width;
+      }
+      else {
+        currentRow.push(item);
+        currentWidth = nextWidth;
+      }
+    });
+
+    if (currentRow.length) {
+      rows.push(currentRow);
+    }
+
+    const maxRowWidth = Math.max(
+      ...rows.map(row => {
+        return row.reduce((sum, item, index) => {
+          return sum + item.width + (index ? LEGEND_ITEM_GAP_X : 0);
+        }, 0);
+      }),
+      0
+    );
+
+    const height =
+      LEGEND_PAD_Y * 2 +
+      LEGEND_TITLE_HEIGHT +
+      rows.length * LEGEND_ROW_HEIGHT +
+      Math.max(0, rows.length - 1) * LEGEND_ITEM_GAP_Y;
+
+    return {
+      entries,
+      rows,
+      width: maxRowWidth + LEGEND_PAD_X * 2,
+      height,
+    };
+  }
+
+function drawLegend(svg, visuals, svgW, svgH, title) {
     // Sort entries alphabetically by label.
     const entries = Object.values(visuals)
       .filter(v => v.label)
@@ -779,3 +869,4 @@
       .replace(/>/g,  '&gt;')
       .replace(/"/g,  '&quot;');
   }
+})(Drupal, drupalSettings, once);
