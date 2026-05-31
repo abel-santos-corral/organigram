@@ -5,8 +5,11 @@
  * Organigram module — Organigram node CT, Paragraph type, and D3 renderer.
  */
 
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_theme().
@@ -87,4 +90,73 @@ function organigram_form_node_organigram_node_form_alter(array &$form, FormState
       $form[$field_name]['#states']['visible'][$enable_modal_selector] = ['checked' => TRUE];
     }
   }
+}
+
+/**
+ * Implements hook_node_insert().
+ *
+ * Invalidates the organigram node list tag so any cached organigram that
+ * could include the new node is rebuilt on the next request.
+ */
+function organigram_node_insert(NodeInterface $node): void {
+  if ($node->bundle() === 'organigram_node') {
+    Cache::invalidateTags(['node_list:organigram_node']);
+  }
+}
+
+/**
+ * Implements hook_node_update().
+ *
+ * The node's own cache tags (node:NID) are invalidated automatically by core.
+ * We additionally invalidate the list tag so ancestor-rooted organigrams that
+ * embed this node are also rebuilt.
+ */
+function organigram_node_update(NodeInterface $node): void {
+  if ($node->bundle() === 'organigram_node') {
+    Cache::invalidateTags(['node_list:organigram_node']);
+  }
+}
+
+/**
+ * Implements hook_node_delete().
+ *
+ * Core invalidates the node's own cache tags on delete. The list tag
+ * invalidation here ensures ancestor-rooted organigrams remove the deleted
+ * node from any cached output.
+ */
+function organigram_node_delete(NodeInterface $node): void {
+  if ($node->bundle() === 'organigram_node') {
+    Cache::invalidateTags(['node_list:organigram_node']);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for organigram_node_type.
+ *
+ * Invalidates the config-entity list tag so all organigram displays pick up
+ * the new node type on their next render.
+ */
+function organigram_organigram_node_type_insert(EntityInterface $entity): void {
+  Cache::invalidateTags(['config:organigram.organigram_node_type_list']);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update() for organigram_node_type.
+ *
+ * The entity's own config cache tag is invalidated automatically by core.
+ * We also invalidate the list tag so organigrams that reference this type
+ * through their visuals are flushed.
+ */
+function organigram_organigram_node_type_update(EntityInterface $entity): void {
+  Cache::invalidateTags(['config:organigram.organigram_node_type_list']);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete() for organigram_node_type.
+ *
+ * Ensures all cached organigram output that referenced the deleted type is
+ * invalidated immediately.
+ */
+function organigram_organigram_node_type_delete(EntityInterface $entity): void {
+  Cache::invalidateTags(['config:organigram.organigram_node_type_list']);
 }

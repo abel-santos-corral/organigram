@@ -2,6 +2,7 @@
 
 namespace Drupal\organigram\Service;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
@@ -47,11 +48,17 @@ class OrganigramGraphBuilder {
    *
    * @param \Drupal\node\NodeInterface $root
    *   The root organigram node.
+   * @param \Drupal\Core\Cache\CacheableMetadata|null $cacheability
+   *   Optional cacheability metadata object to populate. When provided, all
+   *   cache tags and contexts collected during the walk are merged into it.
    *
    * @return array
    *   The normalized graph contract.
    */
-  public function build(NodeInterface $root): array {
+  public function build(
+    NodeInterface $root,
+    ?CacheableMetadata $cacheability = NULL,
+  ): array {
     $graph = [
       'meta' => [
         'root' => (int) $root->id(),
@@ -64,7 +71,16 @@ class OrganigramGraphBuilder {
       'visuals' => [],
     ];
 
-    $this->walkNode($root, $graph, NULL, 0);
+    // Collect cacheability for every entity visited during the walk.
+    $local_cache = new CacheableMetadata();
+
+    // The root node itself contributes its cache tags.
+    $local_cache->addCacheableDependency($root);
+
+    // All organigram_node_type config entities affect the output.
+    $local_cache->addCacheTags(['config:organigram.organigram_node_type_list']);
+
+    $this->walkNode($root, $graph, NULL, 0, $local_cache);
 
     $context = [
       'root_node' => $root,
@@ -76,12 +92,16 @@ class OrganigramGraphBuilder {
       $context
     );
 
-    
     if (empty($graph['visuals'])) {
       \Drupal::logger('organigram')->warning(
         'No visuals generated for organigram @nid.',
         ['@nid' => $root->id()]
       );
+    }
+
+    // Merge collected metadata into the caller-supplied object if given.
+    if ($cacheability !== NULL) {
+      $cacheability->merge($local_cache);
     }
 
     return $graph;
@@ -98,12 +118,15 @@ class OrganigramGraphBuilder {
    *   The parent node.
    * @param int $depth
    *   The current recursion depth.
+   * @param \Drupal\Core\Cache\CacheableMetadata $cacheability
+   *   Cacheability metadata collector.
    */
   protected function walkNode(
     NodeInterface $node,
     array &$graph,
     ?NodeInterface $parent,
     int $depth,
+    CacheableMetadata $cacheability,
   ): void {
 
     if ($depth > 15) {
@@ -123,6 +146,9 @@ class OrganigramGraphBuilder {
 
       if ($node_type instanceof OrganigramNodeTypeInterface) {
         $node_type_id = $node_type->id();
+
+        // Add the specific node-type config entity cache tags.
+        $cacheability->addCacheableDependency($node_type);
 
         $this->ensureVisualDefinition(
           $graph,
@@ -146,7 +172,9 @@ class OrganigramGraphBuilder {
     }
 
     foreach ($this->loadChildren($node) as $child) {
-      $this->walkNode($child, $graph, $node, $depth + 1);
+      // Each child node contributes its own cache tags.
+      $cacheability->addCacheableDependency($child);
+      $this->walkNode($child, $graph, $node, $depth + 1, $cacheability);
     }
   }
 

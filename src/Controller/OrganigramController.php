@@ -2,6 +2,9 @@
 
 namespace Drupal\organigram\Controller;
 
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
@@ -9,7 +12,6 @@ use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\organigram\Service\OrganigramGraphBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Handles the organigram display page and JSON data endpoint.
@@ -81,6 +83,10 @@ class OrganigramController extends ControllerBase {
 
   /**
    * Displays the organigram for a root node.
+   *
+   * Cache tags are derived from the root node and propagated to the render
+   * array so that Drupal's page cache invalidates correctly whenever any
+   * organigram_node or organigram_node_type entity is saved or deleted.
    */
   public function display(NodeInterface $node): array {
     $dataUrl = Url::fromRoute(
@@ -99,14 +105,16 @@ class OrganigramController extends ControllerBase {
           'organigram' => [
             'dataUrl' => $dataUrl,
             'rootId' => (int) $node->id(),
-            // Translatable legend title — the translation lives in Drupal's
-            // i18n system; JS reads drupalSettings.organigram.legendTitle.
             'legendTitle' => (string) $this->t('Legend'),
           ],
         ],
       ],
       '#cache' => [
-        'tags' => $node->getCacheTags(),
+        'tags' => Cache::mergeTags(
+          $node->getCacheTags(),
+          ['node_list:organigram_node'],
+          ['config:organigram.organigram_node_type_list'],
+        ),
       ],
     ];
   }
@@ -119,12 +127,27 @@ class OrganigramController extends ControllerBase {
   }
 
   /**
-   * Returns the organigram data as JSON.
+   * Returns the organigram data as a cacheable JSON response.
+   *
+   * The response carries the cache tags of every organigram_node and
+   * organigram_node_type entity that contributed to the payload, so Drupal's
+   * Dynamic Page Cache and reverse proxies (Varnish, CDN) can invalidate it
+   * precisely when any of those entities is updated or deleted.
    */
-  public function data(NodeInterface $node): JsonResponse {
-    return new JsonResponse(
-      $this->graphBuilder->build($node)
-    );
+  public function data(NodeInterface $node): CacheableJsonResponse {
+    $cacheability = new CacheableMetadata();
+    $cacheability->addCacheableDependency($node);
+    $cacheability->addCacheTags([
+      'node_list:organigram_node',
+      'config:organigram.organigram_node_type_list',
+    ]);
+
+    $graph = $this->graphBuilder->build($node);
+
+    $response = new CacheableJsonResponse($graph);
+    $response->addCacheableDependency($cacheability);
+
+    return $response;
   }
 
 }
