@@ -1,0 +1,8 @@
+name: 'Organigram Block'
+type: module
+description: 'Exposes a configurable block that renders an organigram for any root organigram_node. Multiple blocks can be placed on different pages, each rooted at a different node.'
+core_version_requirement: ^10 || ^11
+package: Organigram
+dependencies:
+  - organigram:organigram
+  - drupal:block
