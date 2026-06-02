@@ -1,0 +1,6 @@
+organigram_d3.settings:
+  title: 'D3 renderer settings'
+  route_name: organigram_d3.settings
+  parent: organigram.settings
+  description: 'Configure D3 renderer options: canvas dimensions, modal size, zoom behaviour, and collapse depth.'
+  weight: 10

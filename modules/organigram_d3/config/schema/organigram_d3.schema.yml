@@ -1,0 +1,30 @@
+# Schema for organigram_d3 module settings.
+
+organigram_d3.settings:
+  type: config_object
+  label: 'Organigram D3 settings'
+  mapping:
+    height:
+      type: integer
+      label: 'Canvas height (px)'
+    width:
+      type: integer
+      label: 'Canvas width (%)'
+    modal_height:
+      type: integer
+      label: 'Modal height (px)'
+    modal_width:
+      type: integer
+      label: 'Modal width (px)'
+    zoom_enabled:
+      type: boolean
+      label: 'Enable zoom'
+    zoom_min:
+      type: float
+      label: 'Zoom minimum scale'
+    zoom_max:
+      type: float
+      label: 'Zoom maximum scale'
+    collapse_depth:
+      type: integer
+      label: 'Default collapse depth'

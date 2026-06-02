@@ -1,0 +1,8 @@
+# D3-specific renderer settings: canvas size, modal dimensions, zoom behaviour.
+organigram_d3.settings:
+  path: '/admin/config/organigram/d3'
+  defaults:
+    _form: '\Drupal\organigram_d3\Form\OrganigramD3SettingsForm'
+    _title: 'Organigram D3 settings'
+  requirements:
+    _permission: 'administer organigram'

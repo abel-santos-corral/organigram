@@ -1,0 +1,13 @@
+{#
+ * @file organigram-display.html.twig
+ * Variables: root_node_id, settings
+#}
+<div id="organigram-container"
+     class="organigram"
+     data-root-id="{{ root_node_id }}"
+     aria-label="{{ 'Organisational chart'|t }}"
+     role="region">
+  <p class="organigram__loading js-organigram-loading">
+    {{ 'Loading organigram\u2026'|t }}
+  </p>
+</div>

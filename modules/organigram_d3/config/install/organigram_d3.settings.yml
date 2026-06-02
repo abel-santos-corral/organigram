@@ -1,0 +1,8 @@
+height: 600
+width: 100
+modal_height: 500
+modal_width: 700
+zoom_enabled: true
+zoom_min: 0.1
+zoom_max: 3.0
+collapse_depth: 2
