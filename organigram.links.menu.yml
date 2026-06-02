@@ -4,3 +4,10 @@ organigram.organigram_node_type.collection:
   parent: system.admin_structure
   description: 'Manage Organigram node type definitions: visual styling for organigram nodes and connector lines.'
   weight: 10
+
+organigram.settings:
+  title: 'Organigram'
+  route_name: organigram.settings
+  parent: system.admin_config_content
+  description: 'Configure global organigram settings including the active renderer.'
+  weight: 10

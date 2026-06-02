@@ -12,6 +12,8 @@
  *   The normalized graph contract.
  * @param array $context
  *   Additional graph build context.
+ *
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 function hook_organigram_graph_alter(
   array &$graph,

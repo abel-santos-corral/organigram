@@ -1,6 +1,6 @@
 name: 'Organigram'
 type: module
-description: 'Organigram node content type, Organigram Node Type config entity, and D3.js organigram renderer. Supports hierarchical and matrix organisational charts with fully configurable node/line visual styles.'
+description: 'Organigram node content type, Organigram Node Type config entity, and renderer plugin system. Enable a renderer submodule such as Organigram D3 to display organigrams.'
 core_version_requirement: ^10 || ^11
 package: Organigram
 dependencies:

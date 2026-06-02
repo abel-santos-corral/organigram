@@ -9,15 +9,24 @@ organigram.display:
     _entity_access: 'node.view'
     node: \d+
 
-# Returns the full tree as JSON consumed by D3.
+# Returns the full tree as JSON consumed by the active renderer.
 organigram.data:
   path: '/organigram/{node}/data'
   defaults:
     _controller: '\Drupal\organigram\Controller\OrganigramController::data'
   requirements:
     _permission: 'access content'
-    node: '\d+'
+    node: '\\d+'
   options:
     parameters:
       node:
         type: entity:node
+
+# Global Organigram settings: active renderer selector.
+organigram.settings:
+  path: '/admin/config/organigram'
+  defaults:
+    _form: '\Drupal\organigram\Form\OrganigramSettingsForm'
+    _title: 'Organigram settings'
+  requirements:
+    _permission: 'administer organigram'

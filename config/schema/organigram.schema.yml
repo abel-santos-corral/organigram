@@ -1,4 +1,4 @@
-# Schema for the Organigram module's config entities.
+# Schema for the Organigram module's config entities and settings.
 
 organigram.organigram_node_type.*:
   type: config_entity
@@ -31,3 +31,11 @@ organigram.organigram_node_type.*:
     line_type:
       type: string
       label: 'Line type'
+
+organigram.settings:
+  type: config_object
+  label: 'Organigram settings'
+  mapping:
+    active_renderer:
+      type: string
+      label: 'Active renderer plugin ID'
