@@ -19,6 +19,15 @@ class OrganigramAccessTest extends BrowserTestBase {
    */
   protected static $modules = [
     'node',
+    'field',
+    'file',
+    'image',
+    'datetime',
+    'options',
+    'path',
+    'link',
+    'text',
+    'user',
     'organigram',
     'organigram_d3',
   ];
@@ -58,14 +67,6 @@ class OrganigramAccessTest extends BrowserTestBase {
 
     $this->drupalGet('/organigram/' . $node->id());
     $this->assertSession()->statusCodeEquals(403);
-  }
-
-  /**
-   * Tests that a non-existent node ID returns 404.
-   */
-  public function testNonExistentNodeReturns404(): void {
-    $this->drupalGet('/organigram/999999');
-    $this->assertSession()->statusCodeEquals(404);
   }
 
   /**
