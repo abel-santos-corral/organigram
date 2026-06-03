@@ -59,6 +59,10 @@ class OrganigramBlockUnitTest extends UnitTestCase {
     $defaults = ['root_node_id' => NULL];
     $merged_config = array_merge($defaults, $configuration);
 
+    $current_user = $this->createMock(
+      \Drupal\Core\Session\AccountProxyInterface::class
+    );
+
     $block = new OrganigramBlock(
       $merged_config,
       'organigram_block',
@@ -72,12 +76,12 @@ class OrganigramBlockUnitTest extends UnitTestCase {
       $graph_builder,
       $renderer_manager,
       $config_factory,
+      $current_user,
     );
 
     $current_user = $this->createMock(AccountProxyInterface::class);
     $current_user->method('hasPermission')->willReturn(FALSE);
 
-    $block->setCurrentUser($current_user);
     $block->setStringTranslation($this->getStringTranslationStub());
 
     return $block;
