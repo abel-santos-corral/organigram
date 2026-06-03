@@ -101,7 +101,7 @@ class OrganigramGraphBuilder {
 
     // Merge collected metadata into the caller-supplied object if given.
     if ($cacheability !== NULL) {
-      $cacheability->merge($local_cache);
+      $cacheability->addCacheableDependency($local_cache);
     }
 
     return $graph;

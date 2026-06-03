@@ -30,6 +30,7 @@ class OrganigramGraphBuilderKernelTest extends KernelTestBase {
     'file',
     'image',
     'datetime',
+    'options',
     'link',
     'organigram',
   ];
@@ -60,11 +61,6 @@ class OrganigramGraphBuilderKernelTest extends KernelTestBase {
     $this->installConfig(['system', 'node', 'organigram']);
     $this->installSchema('node', ['node_access']);
 
-    NodeType::create([
-      'type' => 'organigram_node',
-      'name' => 'Organigram node',
-    ])->save();
-
     User::create([
       'uid' => 1,
       'name' => 'admin',
@@ -84,6 +80,7 @@ class OrganigramGraphBuilderKernelTest extends KernelTestBase {
       'title' => 'Child node',
       'uid' => 1,
       'status' => 1,
+      'field_is_hidden' => 0,
       'field_parent_node' => ['target_id' => $this->rootNode->id()],
     ]);
     $this->childNode->save();
