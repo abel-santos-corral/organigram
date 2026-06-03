@@ -7,6 +7,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
 use Drupal\organigram\OrganigramRendererManager;
 use Drupal\organigram\Service\OrganigramGraphBuilder;
@@ -56,6 +57,11 @@ class OrganigramBlock extends BlockBase implements ContainerFactoryPluginInterfa
   protected ConfigFactoryInterface $configFactory;
 
   /**
+   * The current user.
+   */
+  protected AccountProxyInterface $currentUser;
+
+  /**
    * Constructs an OrganigramBlock object.
    *
    * @param array $configuration
@@ -72,6 +78,8 @@ class OrganigramBlock extends BlockBase implements ContainerFactoryPluginInterfa
    *   The organigram renderer plugin manager.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   * The current user.
    */
   public function __construct(
     array $configuration,
@@ -81,12 +89,14 @@ class OrganigramBlock extends BlockBase implements ContainerFactoryPluginInterfa
     OrganigramGraphBuilder $graph_builder,
     OrganigramRendererManager $renderer_manager,
     ConfigFactoryInterface $config_factory,
+    AccountProxyInterface $current_user,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;
     $this->graphBuilder = $graph_builder;
     $this->rendererManager = $renderer_manager;
     $this->configFactory = $config_factory;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -106,6 +116,7 @@ class OrganigramBlock extends BlockBase implements ContainerFactoryPluginInterfa
       $container->get('organigram.graph_builder'),
       $container->get('plugin.manager.organigram_renderer'),
       $container->get('config.factory'),
+      $container->get('current_user'),
     );
   }
 
@@ -249,7 +260,7 @@ class OrganigramBlock extends BlockBase implements ContainerFactoryPluginInterfa
     return [
       '#type' => 'markup',
       '#markup' => $this->t('Organigram block: no root node configured.'),
-      '#access' => $this->currentUser()->hasPermission('administer blocks'),
+      '#access' => $this->currentUser->hasPermission('administer blocks'),
       '#cache' => [
         'contexts' => ['user.permissions'],
       ],
