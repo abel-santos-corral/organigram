@@ -24,6 +24,10 @@ class OrganigramRendererPluginTest extends KernelTestBase {
     'field',
     'text',
     'node',
+    'datetime',
+    'options',
+    'image',
+    'file',
     'organigram',
     'organigram_d3',
   ];
