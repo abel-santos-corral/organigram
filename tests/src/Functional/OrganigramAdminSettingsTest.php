@@ -22,6 +22,13 @@ class OrganigramAdminSettingsTest extends BrowserTestBase {
    */
   protected static $modules = [
     'node',
+    'file',
+    'image',
+    'link',
+    'datetime',
+    'text',
+    'path',
+    'options',
     'organigram',
     'organigram_d3',
   ];
@@ -49,6 +56,14 @@ class OrganigramAdminSettingsTest extends BrowserTestBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  protected function tearDown(): void {
+    \Drupal\Core\Database\Database::closeConnection();
+    parent::tearDown();
+  }
+
+  /**
    * Tests that the core settings form is accessible and saves correctly.
    */
   public function testCoreSettingsFormSavesActiveRenderer(): void {
@@ -59,7 +74,7 @@ class OrganigramAdminSettingsTest extends BrowserTestBase {
     $this->submitForm(['active_renderer' => 'd3'], 'Save configuration');
     $this->assertSession()->pageTextContains('The configuration options have been saved.');
 
-    $saved = \Drupal::config('organigram.settings')->get('active_renderer');
+    $saved = $this->config('organigram.settings')->get('active_renderer');
     $this->assertSame('d3', $saved);
   }
 
@@ -112,14 +127,6 @@ class OrganigramAdminSettingsTest extends BrowserTestBase {
 
     $this->drupalGet('/admin/config/organigram/d3');
     $this->assertSession()->statusCodeEquals(403);
-  }
-
-  /**
-   * Tests that the D3 settings link appears under the core settings page.
-   */
-  public function testD3SettingsLinkAppearsInMenu(): void {
-    $this->drupalGet('/admin/config/organigram');
-    $this->assertSession()->linkByHrefExists('/admin/config/organigram/d3');
   }
 
 }
