@@ -32,6 +32,7 @@ class D3RendererIntegrationTest extends KernelTestBase {
     'image',
     'datetime',
     'link',
+    'options',
     'organigram',
     'organigram_d3',
   ];
@@ -54,11 +55,6 @@ class D3RendererIntegrationTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installConfig(['system', 'node', 'organigram', 'organigram_d3']);
     $this->installSchema('node', ['node_access']);
-
-    NodeType::create([
-      'type' => 'organigram_node',
-      'name' => 'Organigram node',
-    ])->save();
 
     User::create(['uid' => 1, 'name' => 'admin', 'status' => 1])->save();
 
