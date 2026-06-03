@@ -16,7 +16,7 @@ organigram.data:
     _controller: '\Drupal\organigram\Controller\OrganigramController::data'
   requirements:
     _permission: 'access content'
-    node: '\\d+'
+    node: '\d+'
   options:
     parameters:
       node:

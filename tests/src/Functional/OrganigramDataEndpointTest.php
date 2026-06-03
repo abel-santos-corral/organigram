@@ -18,6 +18,15 @@ class OrganigramDataEndpointTest extends BrowserTestBase {
    */
   protected static $modules = [
     'node',
+    'field',
+    'file',
+    'image',
+    'datetime',
+    'options',
+    'path',
+    'link',
+    'text',
+    'user',
     'organigram',
     'organigram_d3',
     'page_cache',
@@ -62,6 +71,7 @@ class OrganigramDataEndpointTest extends BrowserTestBase {
       'title' => 'Child',
       'uid' => 1,
       'status' => 1,
+      'field_is_hidden' => 0,
       'field_parent_node' => ['target_id' => $this->rootNode->id()],
     ]);
     $this->childNode->save();
