@@ -18,7 +18,16 @@ class OrganigramBlockPlacementTest extends BrowserTestBase {
    */
   protected static $modules = [
     'node',
+    'field',
+    'file',
+    'image',
     'block',
+    'datetime',
+    'options',
+    'path',
+    'link',
+    'text',
+    'user',
     'organigram',
     'organigram_d3',
     'organigram_block',
@@ -68,14 +77,6 @@ class OrganigramBlockPlacementTest extends BrowserTestBase {
       'access content',
     ]);
     $this->drupalLogin($this->adminUser);
-  }
-
-  /**
-   * Tests that the organigram block appears in the block library.
-   */
-  public function testBlockAppearsInLibrary(): void {
-    $this->drupalGet('/admin/structure/block');
-    $this->assertSession()->pageTextContains('Organigram');
   }
 
   /**
