@@ -4,6 +4,7 @@ namespace Drupal\Tests\organigram_d3\Unit;
 
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\node\NodeInterface;
 use Drupal\organigram_d3\Plugin\OrganigramRenderer\D3Renderer;
 use Drupal\Tests\UnitTestCase;
@@ -36,11 +37,12 @@ class D3RendererTest extends UnitTestCase {
       'zoom_max' => 3.0,
       'collapse_depth' => 2,
     ];
+
     $values = array_merge($defaults, $config_values);
 
     $config = $this->createMock(Config::class);
     $config->method('get')->willReturnCallback(
-      fn($key) => $values[$key] ?? NULL
+      fn ($key) => $values[$key] ?? NULL
     );
 
     $config_factory = $this->createMock(ConfigFactoryInterface::class);
@@ -48,12 +50,22 @@ class D3RendererTest extends UnitTestCase {
       ->with('organigram_d3.settings')
       ->willReturn($config);
 
-    return new D3Renderer(
+    $renderer = new D3Renderer(
       [],
       'd3',
-      ['id' => 'd3', 'label' => 'D3.js', 'description' => ''],
+      [
+        'id' => 'd3',
+        'label' => 'D3.js',
+        'description' => '',
+      ],
       $config_factory,
     );
+
+    $renderer->setStringTranslation(
+      $this->getStringTranslationStub()
+    );
+
+    return $renderer;
   }
 
   /**
