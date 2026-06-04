@@ -1,6 +1,6 @@
 # Organigram
 
-A Drupal 11 module that provides a fully configurable organisational chart system built on a custom **Organigram node** content type and a **Organigram Node Type** config entity, rendered in the browser using [D3.js v7](https://d3js.org/).
+A Drupal 11 module that provides a fully configurable organizational chart system built on a custom **Organigram node** content type and a **Organigram Node Type** config entity, rendered in the browser using [D3.js v7](https://d3js.org/).
 
 ---
 
@@ -22,6 +22,7 @@ A Drupal 11 module that provides a fully configurable organisational chart syste
 10. [The JSON Data Endpoint](#10-the-json-data-endpoint)
 11. [Permissions](#11-permissions)
 12. [Updating from v1](#12-updating-from-v1)
+13. [Running Tests](#13-running-tests)
 
 ---
 
@@ -428,3 +429,78 @@ The update hook `organigram_update_10001()` performs the following steps automat
 5. Re-inserts the saved values — the old machine-name values (`department`, `position`, etc.) are identical to the new Organigram Node Type IDs, so no data transformation is needed.
 
 > **Note:** The update hook also triggers `config.installer` to install the default Organigram Node Type presets if they do not already exist. Existing values not matching a preset ID (e.g. `squad`, `tribe`) will result in nodes with a null Organigram Node Type. These nodes must be reassigned manually after the update.
+
+---
+
+## 13. Running Tests
+
+The Organigram project includes Unit, Kernel, Functional and Functional Javascript tests across the main module and its renderer/block submodules.
+
+### Run all Organigram tests
+
+Execute all tests belonging to the Organigram project, including submodules such as `organigram_d3` and `organigram_block`:
+
+```bash
+docker compose exec web ./vendor/bin/phpunit \
+lib/modules/organigram
+```
+
+### Run only tests from the main Organigram module
+
+```bash
+docker compose exec web ./vendor/bin/phpunit \
+lib/modules/organigram/tests
+```
+
+### Run tests by test suite
+
+**Unit tests**
+
+```bash
+docker compose exec web ./vendor/bin/phpunit \
+--testsuite unit \
+lib/modules/organigram
+```
+
+**Kernel tests**
+
+```bash
+docker compose exec web ./vendor/bin/phpunit \
+--testsuite kernel \
+lib/modules/organigram
+```
+
+**Functional tests**
+
+```bash
+docker compose exec web ./vendor/bin/phpunit \
+--testsuite functional \
+lib/modules/organigram
+```
+
+**Functional Javascript tests**
+
+```bash
+docker compose exec web ./vendor/bin/phpunit \
+--testsuite functional-javascript \
+lib/modules/organigram
+```
+
+### Run a single test class
+
+Example:
+
+```bash
+docker compose exec web ./vendor/bin/phpunit \
+lib/modules/organigram/tests/src/Functional/OrganigramPageCacheTest.php
+```
+
+### Run a single test method
+
+Example:
+
+```bash
+docker compose exec web ./vendor/bin/phpunit \
+--filter testPageCacheHeadersPresent \
+lib/modules/organigram/tests/src/Functional/OrganigramPageCacheTest.php
+```
