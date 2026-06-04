@@ -1,6 +1,7 @@
 name: 'Organigram'
 type: module
 description: 'Organigram node content type, Organigram Node Type config entity, and renderer plugin system. Enable a renderer submodule such as Organigram D3 to display organigrams.'
+configure: organigram.settings
 core_version_requirement: ^10 || ^11
 package: Organigram
 dependencies:
