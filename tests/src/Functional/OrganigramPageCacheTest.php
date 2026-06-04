@@ -26,6 +26,15 @@ class OrganigramPageCacheTest extends BrowserTestBase {
    */
   protected static $modules = [
     'node',
+    'field',
+    'file',
+    'image',
+    'datetime',
+    'options',
+    'path',
+    'link',
+    'text',
+    'user',
     'organigram',
     'organigram_d3',
     'page_cache',
