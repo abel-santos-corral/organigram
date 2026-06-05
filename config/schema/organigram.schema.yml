@@ -39,3 +39,12 @@ organigram.settings:
     active_renderer:
       type: string
       label: 'Active renderer plugin ID'
+
+# Schema for the OrganigramBlock plugin instance configuration.
+block.settings.organigram_block:
+  type: block_settings
+  label: 'Organigram block settings'
+  mapping:
+    root_node_id:
+      type: integer
+      label: 'Root node ID'

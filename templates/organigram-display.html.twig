@@ -1,6 +1,16 @@
 {#
  * @file organigram-display.html.twig
- * Variables: root_node_id, settings
+ *
+ * Default template for the organigram display. Used as fallback when no
+ * renderer-specific override exists.
+ *
+ * To override per renderer, create in your theme:
+ *   organigram-display--[plugin_id].html.twig   (e.g. organigram-display--d3.html.twig)
+ *
+ * Available variables:
+ *   - root_node_id: NID of the root organigram node.
+ *   - plugin_id:    Active renderer plugin ID (e.g. 'd3').
+ *   - settings:     Renderer-specific settings array.
 #}
 <div id="organigram-container"
      class="organigram"
@@ -8,6 +18,6 @@
      aria-label="{{ 'Organisational chart'|t }}"
      role="region">
   <p class="organigram__loading js-organigram-loading">
-    {{ 'Loading organigram\u2026'|t }}
+    {{ 'Loading organigram…'|t }}
   </p>
 </div>

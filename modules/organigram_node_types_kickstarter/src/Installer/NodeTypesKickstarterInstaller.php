@@ -7,7 +7,6 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleExtensionList;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,11 +24,6 @@ class NodeTypesKickstarterInstaller implements ContainerInjectionInterface {
   protected const MODULE_NAME = 'organigram_node_types_kickstarter';
 
   /**
-   * The Organigram module machine name.
-   */
-  protected const ORGANIGRAM_MODULE = 'organigram';
-
-  /**
    * The Organigram node type config entity type ID.
    */
   protected const NODE_TYPE_ENTITY = 'organigram_node_type';
@@ -38,7 +32,6 @@ class NodeTypesKickstarterInstaller implements ContainerInjectionInterface {
    * Constructs a NodeTypesKickstarterInstaller object.
    */
   public function __construct(
-    protected ModuleHandlerInterface $moduleHandler,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected ModuleExtensionList $moduleList,
     protected Connection $database,
@@ -50,7 +43,6 @@ class NodeTypesKickstarterInstaller implements ContainerInjectionInterface {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('module_handler'),
       $container->get('entity_type.manager'),
       $container->get('extension.list.module'),
       $container->get('database'),
@@ -62,22 +54,10 @@ class NodeTypesKickstarterInstaller implements ContainerInjectionInterface {
    * Installs or updates starter node type config.
    */
   public function install(): void {
-    if (!$this->canInstall()) {
-      return;
-    }
-
     $this->installNodeTypes();
     $this->migratePositionReferences();
     $this->deletePositionNodeType();
     $this->messenger->addStatus($this->t('Default organigram node types have been installed.'));
-  }
-
-  /**
-   * Checks whether the Organigram node type entity is available.
-   */
-  protected function canInstall(): bool {
-    return $this->moduleHandler->moduleExists(self::ORGANIGRAM_MODULE)
-      && $this->entityTypeManager->hasDefinition(self::NODE_TYPE_ENTITY);
   }
 
   /**

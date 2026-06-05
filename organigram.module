@@ -20,10 +20,58 @@ function organigram_theme(): array {
       'variables' => [
         'root_node_id' => NULL,
         'settings'     => [],
+        'plugin_id'    => NULL,
       ],
       'template' => 'organigram-display',
     ],
   ];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for organigram_display.
+ *
+ * Adds a renderer-specific suggestion so themes can override the template
+ * per renderer without touching the default.
+ *
+ * Example: to override the D3 renderer output, create
+ * organigram-display--d3.html.twig in your theme's templates directory.
+ */
+function organigram_theme_suggestions_organigram_display_alter(
+  array &$suggestions,
+  array $variables,
+): void {
+  if (!empty($variables['plugin_id'])) {
+    $suggestions[] = 'organigram_display__' . $variables['plugin_id'];
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_block_alter().
+ *
+ * Adds a renderer-specific suggestion to the organigram_block Drupal block so
+ * themes can target the entire block wrapper per active renderer.
+ *
+ * Suggestion order (most specific last, Drupal picks the most specific):
+ *   block
+ *   block__organigram_block
+ *   block__organigram_block__[renderer]   <- added here, e.g. __d3
+ *
+ * Usage in a theme: create block--organigram-block--d3.html.twig.
+ * Usage in a module: implement hook_theme_suggestions_block_alter() and
+ * append further suggestions as needed.
+ */
+function organigram_theme_suggestions_block_alter(
+  array &$suggestions,
+  array $variables,
+): void {
+  if (($variables['elements']['#plugin_id'] ?? '') !== 'organigram_block') {
+    return;
+  }
+
+  $active_renderer = \Drupal::config('organigram.settings')->get('active_renderer');
+  if (!empty($active_renderer)) {
+    $suggestions[] = 'block__organigram_block__' . $active_renderer;
+  }
 }
 
 /**

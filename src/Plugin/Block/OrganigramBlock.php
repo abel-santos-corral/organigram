@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\organigram_block\Plugin\Block;
+namespace Drupal\organigram\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Config\ConfigFactoryInterface;

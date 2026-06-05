@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\organigram_block\Unit;
+namespace Drupal\Tests\organigram\Unit;
 
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -11,14 +11,14 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
 use Drupal\organigram\OrganigramRendererManager;
 use Drupal\organigram\Service\OrganigramGraphBuilder;
-use Drupal\organigram_block\Plugin\Block\OrganigramBlock;
+use Drupal\organigram\Plugin\Block\OrganigramBlock;
 use Drupal\Tests\UnitTestCase;
 
 /**
  * Unit tests for the OrganigramBlock plugin.
  *
- * @group organigram_block
- * @coversDefaultClass \Drupal\organigram_block\Plugin\Block\OrganigramBlock
+ * @group organigram
+ * @coversDefaultClass \Drupal\organigram\Plugin\Block\OrganigramBlock
  */
 class OrganigramBlockUnitTest extends UnitTestCase {
 
@@ -30,7 +30,7 @@ class OrganigramBlockUnitTest extends UnitTestCase {
    * @param \Drupal\node\NodeInterface|null $node
    *   Node to return from entity storage load, or NULL.
    *
-   * @return \Drupal\organigram_block\Plugin\Block\OrganigramBlock
+   * @return \Drupal\organigram\Plugin\Block\OrganigramBlock
    *   The block instance.
    */
   protected function buildBlock(array $configuration = [], ?NodeInterface $node = NULL): OrganigramBlock {
@@ -70,7 +70,7 @@ class OrganigramBlockUnitTest extends UnitTestCase {
         'id' => 'organigram_block',
         'admin_label' => 'Organigram',
         'category' => 'Organigram',
-        'provider' => 'organigram_block',
+        'provider' => 'organigram',
       ],
       $entity_type_manager,
       $graph_builder,

@@ -1,6 +1,6 @@
 name: 'Organigram'
 type: module
-description: 'Organigram node content type, Organigram Node Type config entity, and renderer plugin system. Enable a renderer submodule such as Organigram D3 to display organigrams.'
+description: 'Organigram node content type, Organigram Node Type config entity, renderer plugin system, and configurable block. Enable a renderer submodule such as Organigram D3 to display organigrams.'
 configure: organigram.settings
 core_version_requirement: ^10 || ^11
 package: Organigram
@@ -11,3 +11,4 @@ dependencies:
   - drupal:link
   - drupal:datetime
   - drupal:text
+  - drupal:block

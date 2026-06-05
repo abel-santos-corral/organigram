@@ -1,17 +1,17 @@
 <?php
 
-namespace Drupal\Tests\organigram_block\Kernel;
+namespace Drupal\Tests\organigram\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
-use Drupal\organigram_block\Plugin\Block\OrganigramBlock;
+use Drupal\organigram\Plugin\Block\OrganigramBlock;
 use Drupal\user\Entity\User;
 
 /**
  * Kernel integration tests for the OrganigramBlock plugin.
  *
- * @group organigram_block
+ * @group organigram
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
 class OrganigramBlockKernelTest extends KernelTestBase {
@@ -33,7 +33,7 @@ class OrganigramBlockKernelTest extends KernelTestBase {
     'options',
     'organigram',
     'organigram_d3',
-    'organigram_block',
+
   ];
 
   /**
@@ -77,8 +77,11 @@ class OrganigramBlockKernelTest extends KernelTestBase {
   public function testBlockPluginDiscoverable(): void {
     $manager = $this->container->get('plugin.manager.block');
     $definition = $manager->getDefinition('organigram_block');
-    $this->assertNotEmpty($definition);
-    $this->assertSame('organigram_block', $definition['id']);
+
+    $this->assertSame(
+      'organigram_block',
+      $definition['id']
+    );
   }
 
   /**
@@ -121,12 +124,16 @@ class OrganigramBlockKernelTest extends KernelTestBase {
    * @param array $configuration
    *   Block instance configuration.
    *
-   * @return \Drupal\organigram_block\Plugin\Block\OrganigramBlock
+   * @return \Drupal\organigram\Plugin\Block\OrganigramBlock
    *   The block instance.
    */
   protected function instantiateBlock(array $configuration): OrganigramBlock {
     $manager = $this->container->get('plugin.manager.block');
-    return $manager->createInstance('organigram_block', $configuration);
+
+    return $manager->createInstance(
+      'organigram_block',
+      $configuration
+    );
   }
 
 }

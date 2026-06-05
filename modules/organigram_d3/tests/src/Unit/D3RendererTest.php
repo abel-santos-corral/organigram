@@ -42,7 +42,7 @@ class D3RendererTest extends UnitTestCase {
 
     $config = $this->createMock(Config::class);
     $config->method('get')->willReturnCallback(
-      fn ($key) => $values[$key] ?? NULL
+      fn($key) => $values[$key] ?? NULL
     );
 
     $config_factory = $this->createMock(ConfigFactoryInterface::class);

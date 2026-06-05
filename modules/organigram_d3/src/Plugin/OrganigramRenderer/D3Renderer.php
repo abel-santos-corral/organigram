@@ -81,6 +81,7 @@ class D3Renderer extends OrganigramRendererBase implements ContainerFactoryPlugi
       '#theme' => 'organigram_display',
       '#root_node_id' => $root->id(),
       '#settings' => $settings,
+      '#plugin_id' => 'd3',
       '#attached' => [
         'library' => ['organigram_d3/organigram'],
         'drupalSettings' => [

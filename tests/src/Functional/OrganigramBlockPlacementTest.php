@@ -30,7 +30,6 @@ class OrganigramBlockPlacementTest extends BrowserTestBase {
     'user',
     'organigram',
     'organigram_d3',
-    'organigram_block',
   ];
 
   /**

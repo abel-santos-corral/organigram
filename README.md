@@ -103,8 +103,11 @@ organigram/
 │   ├── Form/
 │   │   └── OrganigramNodeTypeForm.php       # Add / Edit form with live preview
 │   ├── OrganigramNodeTypeListBuilder.php    # Admin listing with inline SVG preview
-│   └── Controller/
-│       └── OrganigramController.php # Display page + JSON data endpoint
+│   ├── Controller/
+│   │   └── OrganigramController.php         # Display page + JSON data endpoint
+│   └── Plugin/
+│       └── Block/
+│           └── OrganigramBlock.php          # Configurable block (renderer-agnostic)
 ├── config/
 │   ├── install/                    # Installs on drush en organigram
 │   │   ├── node.type.organigram_node.yml
@@ -115,8 +118,9 @@ organigram/
 │   │   ├── core.entity_form_display.*
 │   │   └── core.entity_view_display.*
 │   └── schema/
-│       └── organigram.schema.yml   # Config schema for OrganigramNodeType entity
+│       └── organigram.schema.yml   # Config schema for OrganigramNodeType entity + block settings
 ├── modules/
+│   ├── organigram_d3/                  # D3.js renderer plugin
 │   └── organigram_node_types_kickstarter/
 │       └── config/optional/
 │           ├── organigram.organigram_node_type.department.yml
@@ -185,8 +189,10 @@ This single command installs all of the following in the correct dependency orde
 - The `organigram_node` content type and all 22 fields
 - The `scope_work_section` Paragraph type and its fields
 - The `organigram_node_type` config entity definition
-- Starter Organigram Node Type presets are provided by the optional Organigram node types kickstarter submodule.
+- The `organigram_block` block plugin (place it at `/admin/structure/block`)
 - All form and view display configurations
+
+Starter Organigram Node Type presets are provided by the optional `organigram_node_types_kickstarter` submodule.
 
 **3. Verify**
 
@@ -438,7 +444,7 @@ The Organigram project includes Unit, Kernel, Functional and Functional Javascri
 
 ### Run all Organigram tests
 
-Execute all tests belonging to the Organigram project, including submodules such as `organigram_d3` and `organigram_block`:
+Execute all tests belonging to the Organigram project, including the submodule `organigram_d3`:
 
 ```bash
 docker compose exec web ./vendor/bin/phpunit \

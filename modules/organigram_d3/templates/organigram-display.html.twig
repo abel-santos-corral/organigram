@@ -1,13 +1,25 @@
 {#
- * @file organigram-display.html.twig
- * Variables: root_node_id, settings
+ * @file organigram-display--d3.html.twig
+ *
+ * D3-renderer-specific override of organigram-display.html.twig.
+ * This template is selected automatically when the active renderer is D3
+ * thanks to the organigram_display__d3 theme suggestion.
+ *
+ * To further override this template in a theme, copy it to:
+ *   your_theme/templates/organigram-display--d3.html.twig
+ *
+ * Available variables:
+ *   - root_node_id: NID of the root organigram node.
+ *   - plugin_id:    Active renderer plugin ID ('d3').
+ *   - settings:     Renderer-specific settings array.
 #}
 <div id="organigram-container"
-     class="organigram"
+     class="organigram organigram--d3"
      data-root-id="{{ root_node_id }}"
+     data-plugin-id="{{ plugin_id }}"
      aria-label="{{ 'Organisational chart'|t }}"
      role="region">
   <p class="organigram__loading js-organigram-loading">
-    {{ 'Loading organigram\u2026'|t }}
+    {{ 'Loading organigram…'|t }}
   </p>
 </div>

@@ -8,35 +8,6 @@
 use Drupal\organigram_node_types_kickstarter\Installer\NodeTypesKickstarterInstaller;
 
 /**
- * Implements hook_requirements().
- */
-function organigram_node_types_kickstarter_requirements(string $phase): array {
-  $requirements = [];
-
-  if ($phase !== 'install') {
-    return $requirements;
-  }
-
-  if (!\Drupal::moduleHandler()->moduleExists('organigram')) {
-    $requirements['organigram_node_types_kickstarter_organigram'] = [
-      'title' => t('Organigram node types kickstarter'),
-      'description' => t('The Organigram module must be installed before the kickstarter node type configuration can be installed.'),
-      'severity' => REQUIREMENT_ERROR,
-    ];
-  }
-
-  if (!\Drupal::entityTypeManager()->hasDefinition('organigram_node_type')) {
-    $requirements['organigram_node_types_kickstarter_entity_type'] = [
-      'title' => t('Organigram node types kickstarter'),
-      'description' => t('The organigram_node_type config entity must exist before the kickstarter node type configuration can be installed.'),
-      'severity' => REQUIREMENT_ERROR,
-    ];
-  }
-
-  return $requirements;
-}
-
-/**
  * Implements hook_install().
  */
 function organigram_node_types_kickstarter_install(): void {
